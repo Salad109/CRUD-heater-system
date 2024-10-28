@@ -1,0 +1,4 @@
+# Street, heater sizes, water meter status
+Norwida, 2.5 1.5 3.14, 0
+Pilsudskiego, 2.1 3.7, 0
+Norwida, 4.2 0.69, 0
