@@ -1,5 +1,6 @@
 package zlosnik.jp.lab03.technician;
 
+import zlosnik.jp.lab03.apps.TenantReader;
 import zlosnik.jp.lab03.tenant.Tenant;
 
 import java.io.*;
@@ -7,6 +8,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Technician {
+    List<Tenant> tenants;
+
+    public Technician() {
+        tenants = TenantReader.getTenants();
+    }
+
     public double getMeterReading(Tenant tenant) {
         double reading = tenant.getAccumulatedHeat();
         int id = tenant.getId();

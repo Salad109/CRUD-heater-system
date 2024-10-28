@@ -9,11 +9,9 @@ import java.util.Scanner;
 
 public class ManagerApp {
     public static void main(String[] args) {
-        System.out.println("I'm a manager!");
         Manager manager = new Manager();
         Scanner scanner = new Scanner(System.in);
 
-        Technician technician = new Technician();
         char choice;
         do {
             int n = 0;
