@@ -33,7 +33,7 @@ public class Manager {
     }
 
 
-    public Tenant getTenantByID(int id) {
+    public Tenant getTenantByID(int id) { // TODO Share these with technician. Database manager class?
         for (Tenant tenant : tenants) {
             if (tenant.getId() == id) {
                 return tenant;

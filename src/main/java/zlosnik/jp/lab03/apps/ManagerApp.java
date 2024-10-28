@@ -47,7 +47,7 @@ public class ManagerApp {
                     }
                     break;
                 case '4':
-                    System.out.println("Provide tenant ID:");
+                    System.out.println("Provide tenant ID:"); // TODO Delete this
                     int id = scanner.nextInt();
                     scanner.nextLine();
                     System.out.println("Reading tenant...");
