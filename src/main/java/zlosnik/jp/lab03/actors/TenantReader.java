@@ -1,7 +1,4 @@
-package zlosnik.jp.lab03.apps;
-
-import zlosnik.jp.lab03.tenant.Heater;
-import zlosnik.jp.lab03.tenant.Tenant;
+package zlosnik.jp.lab03.actors;
 
 import java.io.File;
 import java.io.FileNotFoundException;

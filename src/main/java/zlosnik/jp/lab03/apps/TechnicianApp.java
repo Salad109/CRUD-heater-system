@@ -1,12 +1,14 @@
 package zlosnik.jp.lab03.apps;
 
-import zlosnik.jp.lab03.technician.Technician;
+import zlosnik.jp.lab03.actors.DatabaseManager;
+import zlosnik.jp.lab03.actors.Technician;
 
 import java.util.Scanner;
 
 public class TechnicianApp {
     public static void main(String[] args) {
         Technician technician = new Technician();
+        var databaseManager = new DatabaseManager();
         Scanner scanner = new Scanner(System.in);
 
         char choice;
@@ -27,17 +29,20 @@ public class TechnicianApp {
                     int id = scanner.nextInt();
                     scanner.nextLine();
                     System.out.println("Reading tenant...");
-                    technician.getMeterReading(manager.getTenantByID(id));
+                    technician.getMeterReading(databaseManager.getTenantByID(id));
+                    System.out.println("Tenant read complete.");
                     break;
                 case '2':
                     System.out.println("Provide street:");
-                    String street = scanner.next();
+                    String street = scanner.nextLine();
                     System.out.println("Reading street...");
-                    technician.getMeterReadings(manager.getTenantsByStreet(street));
+                    technician.getMeterReadings(databaseManager.getTenantsByStreet(street));
+                    System.out.println("Street read complete.");
                     break;
                 case '3':
                     System.out.println("Reading all tenants...");
-                    technician.getMeterReadings(manager.getAllTenants());
+                    technician.getMeterReadings(databaseManager.getAllTenants());
+                    System.out.println("All tenants read complete.");
                     break;
                 default:
                     System.out.println("Invalid choice");

@@ -1,4 +1,4 @@
-package zlosnik.jp.lab03.tenant;
+package zlosnik.jp.lab03.actors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +31,7 @@ public class Tenant implements Comparable<Tenant> {
         for (Heater heater : heaters) {
             accumulatedHeat += heater.generateHeat();
         }
+        System.out.println("Generated heat: " + accumulatedHeat);
     }
 
     public String getStreet(){

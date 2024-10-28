@@ -1,8 +1,8 @@
 package zlosnik.jp.lab03.apps;
 
-import zlosnik.jp.lab03.manager.Manager;
-import zlosnik.jp.lab03.technician.Technician;
-import zlosnik.jp.lab03.tenant.Tenant;
+import zlosnik.jp.lab03.actors.DatabaseManager;
+import zlosnik.jp.lab03.actors.Manager;
+import zlosnik.jp.lab03.actors.Tenant;
 
 import java.util.Scanner;
 
@@ -10,6 +10,7 @@ import java.util.Scanner;
 public class ManagerApp {
     public static void main(String[] args) {
         Manager manager = new Manager();
+        DatabaseManager databaseManager = new DatabaseManager();
         Scanner scanner = new Scanner(System.in);
 
         char choice;
@@ -19,10 +20,7 @@ public class ManagerApp {
             System.out.println(n++ + ". Exit");
             System.out.println(n++ + ". Update tenants");
             System.out.println(n++ + ". Print tenants");
-            System.out.println(n++ + ". Generate heat"); // ?
-            System.out.println(n++ + ". Read a specific tenant"); // TODO Move these to TechnicianApp
-            System.out.println(n++ + ". Read a specific street"); //
-            System.out.println(n++ + ". Read all tenants"); //
+            System.out.println(n++ + ". Generate heat"); // TODO ?
             System.out.println(n++ + ". Issue order to read a specific tenant");
             System.out.println(n++ + ". Issue order to read a specific street");
             System.out.println(n + ". Issue order to read all tenants");
@@ -33,51 +31,33 @@ public class ManagerApp {
                     break;
                 case '1':
                     System.out.println("Updating tenants...");
-                    manager.updateTenants();
+                    databaseManager.updateTenants();
                     System.out.println("Tenants updated!");
                     break;
                 case '2':
                     System.out.println("Printing tenants...");
-                    manager.printTenants();
+                    databaseManager.printTenants();
                     break;
                 case '3':
                     System.out.println("Generating heat...");
-                    for (Tenant tenant : manager.getAllTenants()) {
+                    for (Tenant tenant : databaseManager.getAllTenants()) {
                         tenant.generateHeat();
                     }
                     break;
                 case '4':
-                    System.out.println("Provide tenant ID:"); // TODO Delete this
+                    System.out.println("Issuing order to read a specific tenant. Provide tenant ID:");
                     int id = scanner.nextInt();
                     scanner.nextLine();
-                    System.out.println("Reading tenant...");
-                    technician.getMeterReading(manager.getTenantByID(id));
+                    manager.issueOrder("Read tenant " + id);
+                    System.out.println("Order Issued!");
                     break;
                 case '5':
-                    System.out.println("Provide street:");
-                    String street = scanner.next();
-                    System.out.println("Reading street...");
-                    technician.getMeterReadings(manager.getTenantsByStreet(street));
+                    System.out.println("Issuing order to read a specific street. Provide street:");
+                    String street = scanner.nextLine();
+                    manager.issueOrder("Read street " + street);
+                    System.out.println("Order Issued!");
                     break;
                 case '6':
-                    System.out.println("Reading all tenants...");
-                    technician.getMeterReadings(manager.getAllTenants());
-                    break;
-                case '7':
-                    System.out.println("Issuing order to read a specific tenant. Provide tenant ID:");
-                    int id2 = scanner.nextInt();
-                    scanner.nextLine();
-                    manager.issueOrder("Read tenant ID " + id2);
-                    System.out.println("Order Issued!");
-                    break;
-                    case '8':
-                    System.out.println("Issuing order to read a specific street. Provide street:");
-                    String street2 = scanner.nextLine();
-                    scanner.nextLine();
-                    manager.issueOrder("Read street " + street2);
-                    System.out.println("Order Issued!");
-                    break;
-                case '9':
                     System.out.println("Issuing order to read all tenants...");
                     manager.issueOrder("Read all");
                     System.out.println("Order Issued!");

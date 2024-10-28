@@ -1,4 +1,4 @@
-package zlosnik.jp.lab03.tenant;
+package zlosnik.jp.lab03.actors;
 
 public class Heater {
     double size;

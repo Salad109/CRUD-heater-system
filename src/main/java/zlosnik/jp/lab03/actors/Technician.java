@@ -1,7 +1,4 @@
-package zlosnik.jp.lab03.technician;
-
-import zlosnik.jp.lab03.apps.TenantReader;
-import zlosnik.jp.lab03.tenant.Tenant;
+package zlosnik.jp.lab03.actors;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,12 +11,17 @@ public class Technician {
         tenants = TenantReader.getTenants();
     }
 
-    public double getMeterReading(Tenant tenant) {
+    public void getMeterReading(Tenant tenant) {
         double reading = tenant.getAccumulatedHeat();
         int id = tenant.getId();
         writeReadingToFile(id, reading);
         tenant.resetGeneratedHeat();
-        return reading;
+    }
+
+    public void getMeterReadings(List<Tenant> tenants) {
+        for (Tenant tenant : tenants) {
+            getMeterReading(tenant);
+        }
     }
 
     private void writeReadingToFile(int id, double reading) {
@@ -29,12 +31,10 @@ public class Technician {
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String line;
 
-            // Read and add the header line
             if ((line = br.readLine()) != null) {
-                lines.add(line);  // Add header to the lines list
+                lines.add(line);
             }
 
-            // Process each remaining line
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",");
                 if (Integer.parseInt(parts[0].trim()) == id) {
@@ -56,14 +56,5 @@ public class Technician {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-
-    public List<Double> getMeterReadings(List<Tenant> tenants) {
-        List<Double> readings = new ArrayList<>(tenants.size());
-        for (Tenant tenant : tenants) {
-            readings.add(getMeterReading(tenant));
-        }
-        return readings;
     }
 }

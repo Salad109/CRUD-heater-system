@@ -1,5 +1,1 @@
-Read tenant ID 45
-Read street Twoja stara
-Read all
-Read street szypka
-Read street yo mama
+Read tenant ID 4

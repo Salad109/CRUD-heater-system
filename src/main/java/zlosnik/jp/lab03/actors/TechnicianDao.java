@@ -1,6 +1,4 @@
-package zlosnik.jp.lab03.technician;
-
-import zlosnik.jp.lab03.tenant.Tenant;
+package zlosnik.jp.lab03.actors;
 
 import java.util.List;
 
