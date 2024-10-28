@@ -9,8 +9,6 @@ public interface TechnicianDao {
 
     void addTenants(List<Tenant> tenants);
 
-    Tenant getTenant(int id);
-
     List<Tenant> getTenants();
 
     void replaceTenants(List<Tenant> tenants);

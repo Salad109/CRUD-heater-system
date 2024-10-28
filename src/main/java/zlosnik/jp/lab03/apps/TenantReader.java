@@ -1,4 +1,4 @@
-package zlosnik.jp.lab03;
+package zlosnik.jp.lab03.apps;
 
 import zlosnik.jp.lab03.tenant.Heater;
 import zlosnik.jp.lab03.tenant.Tenant;
@@ -22,15 +22,21 @@ public abstract class TenantReader {
 
             while (scanner.hasNextLine()) {
                 String[] parts = scanner.nextLine().split(",");
-                String name = parts[0];
+
+                int id = Integer.parseInt(parts[0]);
+
+                String name = parts[1];
+                if(name.startsWith(" "))
+                    name = name.substring(1);
 
                 List<Heater> heaters = new ArrayList<>();
-                for (String sizeStr : parts[1].trim().split(" ")) {
+                for (String sizeStr : parts[2].split(" ")) {
                     if (!sizeStr.isEmpty()) {
                         heaters.add(new Heater(Double.parseDouble(sizeStr)));
                     }
                 }
-                tenants.add(new Tenant(name, heaters));
+
+                tenants.add(new Tenant(id, name, heaters));
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

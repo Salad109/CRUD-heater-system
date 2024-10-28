@@ -4,33 +4,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tenant implements Comparable<Tenant> {
+    private final int id;
     private final String street;
     private final List<Heater> heaters = new ArrayList<>();
-    private double generatedHeat;
+    private double accumulatedHeat;
 
-    public Tenant(String street, List<Heater> heaters) {
+    public Tenant(int id, String street, List<Heater> heaters) {
+        this.id = id;
         this.street = street;
         this.heaters.addAll(heaters);
-        generatedHeat = 0;
     }
 
-    public double getGeneratedHeat() {
-        return generatedHeat;
+    public int getId() {
+        return id;
+    }
+
+    public double getAccumulatedHeat() {
+        return accumulatedHeat;
     }
 
     public void resetGeneratedHeat() {
-        this.generatedHeat = 0;
+        this.accumulatedHeat = 0;
     }
 
     public void generateHeat() {
         for (Heater heater : heaters) {
-            generatedHeat += heater.generateHeat();
+            accumulatedHeat += heater.generateHeat();
         }
+    }
+
+    public String getStreet(){
+        return street;
     }
 
     @Override
     public String toString() {
-        return "Tenant[Street=" + street + ", Heaters=" + heaters + "]";
+        return "Tenant[ID=" + id + ", Street=" + street + ", accumulated heat=" + accumulatedHeat + ", " + heaters + "]";
     }
 
     @Override
