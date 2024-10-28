@@ -3,6 +3,9 @@ package zlosnik.jp.lab03.manager;
 import zlosnik.jp.lab03.apps.TenantReader;
 import zlosnik.jp.lab03.tenant.Tenant;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,4 +56,16 @@ public class Manager {
         }
         return newTenants;
     }
+
+    public void issueOrder(String order) {
+        String filePath = "orders.txt";
+
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath, true))) {
+            bw.write(order);
+            bw.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
