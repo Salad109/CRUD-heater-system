@@ -16,17 +16,18 @@ public class ManagerApp {
         Technician technician = new Technician();
         char choice;
         do {
+            int n = 0;
             System.out.println("Manager app:");
-            System.out.println("0. Exit");
-            System.out.println("1. Update tenants");
-            System.out.println("2. Print tenants");
-            System.out.println("3. Generate heat");
-            System.out.println("4. Read a specific tenant");
-            System.out.println("5. Read a specific street");
-            System.out.println("6. Read all tenants");
-            System.out.println("7. Issue order to read a specific tenant");
-            System.out.println("8. Issue order to read a specific street");
-            System.out.println("9. Issue order to read all tenants");
+            System.out.println(n++ + ". Exit");
+            System.out.println(n++ + ". Update tenants");
+            System.out.println(n++ + ". Print tenants");
+            System.out.println(n++ + ". Generate heat"); // ?
+            System.out.println(n++ + ". Read a specific tenant"); // TODO Move these to TechnicianApp
+            System.out.println(n++ + ". Read a specific street"); //
+            System.out.println(n++ + ". Read all tenants"); //
+            System.out.println(n++ + ". Issue order to read a specific tenant");
+            System.out.println(n++ + ". Issue order to read a specific street");
+            System.out.println(n + ". Issue order to read all tenants");
             String input = scanner.nextLine();
             choice = input.charAt(0);
             switch (choice) {
