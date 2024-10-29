@@ -1,8 +1,6 @@
 package zlosnik.jp.lab03.apps;
 
-import zlosnik.jp.lab03.actors.DatabaseManager;
-import zlosnik.jp.lab03.actors.Technician;
-import zlosnik.jp.lab03.actors.Tenant;
+import zlosnik.jp.lab03.actors.*;
 
 import java.util.InputMismatchException;
 import java.util.List;
@@ -50,19 +48,25 @@ public class TechnicianApp {
                         } else {
                             System.out.println("Tenant not found.");
                         }
-                    } catch (InputMismatchException e) { // TODO MissingTenantException
+                    } catch (InputMismatchException e) {
                         System.out.println("Invalid input.");
+                    } catch (TenantNotFoundException e) {
+                        System.out.println("Tenant not found.");
                     }
                     break;
                 case '4':
-                    System.out.println("Provide street:");
-                    String street = scanner.nextLine();
-                    System.out.println("Reading street...");
-                    List<Tenant> tenantList = databaseManager.getTenantsByStreet(street);
-                    if (tenantList != null) {
-                        technician.getMeterReadings(tenantList);
-                        System.out.println("Street read complete.");
-                    } else {
+                    try {
+                        System.out.println("Provide street:");
+                        String street = scanner.nextLine();
+                        System.out.println("Reading street...");
+                        List<Tenant> tenantList = databaseManager.getTenantsByStreet(street);
+                        if (tenantList != null) {
+                            technician.getMeterReadings(tenantList);
+                            System.out.println("Street read complete.");
+                        } else {
+                            System.out.println("Street not found.");
+                        }
+                    }catch (StreetNotFoundException e){
                         System.out.println("Street not found.");
                     }
                     break;

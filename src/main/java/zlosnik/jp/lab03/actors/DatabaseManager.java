@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class DatabaseManager {
+    private static final String TENANTS_PATH = "tenants.txt";
     private List<Tenant> tenants;
 
     public DatabaseManager() {
@@ -19,19 +20,21 @@ public class DatabaseManager {
         }
     }
 
-    public Tenant getTenantByID(int id) {
+    public Tenant getTenantByID(int id) throws TenantNotFoundException {
         for (Tenant tenant : tenants) {
             if (tenant.getId() == id) {
                 return tenant;
             }
         }
-        return null;
+        throw new TenantNotFoundException(id);
     }
 
-    public List<Tenant> getTenantsByStreet(String street) {
+    public List<Tenant> getTenantsByStreet(String street) throws StreetNotFoundException {
         List<Tenant> newTenants = new ArrayList<>();
         for (Tenant tenant : tenants)
             if (tenant.getStreet().equals(street)) newTenants.add(tenant);
+
+        if (newTenants.isEmpty()) throw new StreetNotFoundException(street);
         return newTenants;
     }
 
@@ -43,7 +46,7 @@ public class DatabaseManager {
     public List<Tenant> updateTenants() {
         tenants = new ArrayList<>();
 
-        try (Scanner scanner = new Scanner(new File("tenants.txt"))) {
+        try (Scanner scanner = new Scanner(new File(TENANTS_PATH))) {
             if (scanner.hasNextLine()) scanner.nextLine(); // Skip header line
 
             while (scanner.hasNextLine()) {
