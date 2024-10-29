@@ -2,7 +2,6 @@ package zlosnik.jp.lab03.apps;
 
 import zlosnik.jp.lab03.actors.DatabaseManager;
 import zlosnik.jp.lab03.actors.Manager;
-import zlosnik.jp.lab03.actors.Tenant;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -21,7 +20,6 @@ public class ManagerApp {
             System.out.println(n++ + ". Exit");
             System.out.println(n++ + ". Update tenants");
             System.out.println(n++ + ". Print tenants");
-            System.out.println(n++ + ". Generate heat"); // TODO ?
             System.out.println(n++ + ". Issue order to read a specific tenant");
             System.out.println(n++ + ". Issue order to read a specific street");
             System.out.println(n + ". Issue order to read all tenants");
@@ -40,13 +38,6 @@ public class ManagerApp {
                     databaseManager.printTenants();
                     break;
                 case '3':
-                    System.out.println("Generating heat...");
-                    for (Tenant tenant : databaseManager.getAllTenants()) {
-                        tenant.generateHeat();
-                    }
-                    System.out.println("Heat generated!");
-                    break;
-                case '4':
                     System.out.println("Issuing order to read a specific tenant. Provide tenant ID:");
                     try {
                         int id = scanner.nextInt();
@@ -57,13 +48,13 @@ public class ManagerApp {
                         System.out.println("Invalid input.");
                     }
                     break;
-                case '5':
+                case '4':
                     System.out.println("Issuing order to read a specific street. Provide street:");
                     String street = scanner.nextLine();
                     manager.issueOrder("Read, street, " + street);
                     System.out.println("Order Issued!");
                     break;
-                case '6':
+                case '5':
                     System.out.println("Issuing order to read all tenants...");
                     manager.issueOrder("Read, all");
                     System.out.println("Order Issued!");

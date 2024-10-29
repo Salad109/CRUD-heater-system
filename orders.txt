@@ -1,2 +1,0 @@
-Read tenant, 4
-Read, street, lkj
