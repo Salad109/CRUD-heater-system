@@ -23,7 +23,7 @@ public class Tenant implements Comparable<Tenant> {
         return accumulatedHeat;
     }
 
-    public void resetGeneratedHeat() {
+    public void resetAccumulatedHeat() {
         this.accumulatedHeat = 0;
     }
 

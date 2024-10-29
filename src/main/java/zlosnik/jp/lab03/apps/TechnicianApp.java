@@ -2,7 +2,10 @@ package zlosnik.jp.lab03.apps;
 
 import zlosnik.jp.lab03.actors.DatabaseManager;
 import zlosnik.jp.lab03.actors.Technician;
+import zlosnik.jp.lab03.actors.Tenant;
 
+import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class TechnicianApp {
@@ -16,6 +19,8 @@ public class TechnicianApp {
             int n = 0;
             System.out.println("Technician app:");
             System.out.println(n++ + ". Exit");
+            System.out.println(n++ + ". Read orders");
+            System.out.println(n++ + ". Delete oldest order");
             System.out.println(n++ + ". Read a specific tenant");
             System.out.println(n++ + ". Read a specific street");
             System.out.println(n + ". Read all tenants");
@@ -25,21 +30,43 @@ public class TechnicianApp {
                 case '0':
                     break;
                 case '1':
-                    System.out.println("Provide tenant ID:");
-                    int id = scanner.nextInt();
-                    scanner.nextLine();
-                    System.out.println("Reading tenant...");
-                    technician.getMeterReading(databaseManager.getTenantByID(id));
-                    System.out.println("Tenant read complete.");
+                    technician.readOrders();
                     break;
                 case '2':
+                    System.out.println("Deleting oldest order");
+                    technician.deleteFirstOrder();
+                    System.out.println("Deleted oldest order");
+                    break;
+                case '3':
+                    System.out.println("Provide tenant ID:");
+                    try {
+                        int id = scanner.nextInt();
+                        scanner.nextLine();
+                        System.out.println("Reading tenant...");
+                        Tenant tenant = databaseManager.getTenantByID(id);
+                        if (tenant != null) {
+                            technician.getMeterReading(tenant);
+                            System.out.println("Tenant read complete.");
+                        } else {
+                            System.out.println("Tenant not found.");
+                        }
+                    } catch (InputMismatchException e) { // TODO MissingTenantException
+                        System.out.println("Invalid input.");
+                    }
+                    break;
+                case '4':
                     System.out.println("Provide street:");
                     String street = scanner.nextLine();
                     System.out.println("Reading street...");
-                    technician.getMeterReadings(databaseManager.getTenantsByStreet(street));
-                    System.out.println("Street read complete.");
+                    List<Tenant> tenantList = databaseManager.getTenantsByStreet(street);
+                    if (tenantList != null) {
+                        technician.getMeterReadings(tenantList);
+                        System.out.println("Street read complete.");
+                    } else {
+                        System.out.println("Street not found.");
+                    }
                     break;
-                case '3':
+                case '5':
                     System.out.println("Reading all tenants...");
                     technician.getMeterReadings(databaseManager.getAllTenants());
                     System.out.println("All tenants read complete.");

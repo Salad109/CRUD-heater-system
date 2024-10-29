@@ -4,6 +4,7 @@ import zlosnik.jp.lab03.actors.DatabaseManager;
 import zlosnik.jp.lab03.actors.Manager;
 import zlosnik.jp.lab03.actors.Tenant;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
@@ -43,23 +44,28 @@ public class ManagerApp {
                     for (Tenant tenant : databaseManager.getAllTenants()) {
                         tenant.generateHeat();
                     }
+                    System.out.println("Heat generated!");
                     break;
                 case '4':
                     System.out.println("Issuing order to read a specific tenant. Provide tenant ID:");
-                    int id = scanner.nextInt();
-                    scanner.nextLine();
-                    manager.issueOrder("Read tenant " + id);
-                    System.out.println("Order Issued!");
+                    try {
+                        int id = scanner.nextInt();
+                        scanner.nextLine();
+                        manager.issueOrder("Read tenant, " + id);
+                        System.out.println("Order Issued!");
+                    } catch (InputMismatchException e) {
+                        System.out.println("Invalid input.");
+                    }
                     break;
                 case '5':
                     System.out.println("Issuing order to read a specific street. Provide street:");
                     String street = scanner.nextLine();
-                    manager.issueOrder("Read street " + street);
+                    manager.issueOrder("Read, street, " + street);
                     System.out.println("Order Issued!");
                     break;
                 case '6':
                     System.out.println("Issuing order to read all tenants...");
-                    manager.issueOrder("Read all");
+                    manager.issueOrder("Read, all");
                     System.out.println("Order Issued!");
                     break;
                 default:
