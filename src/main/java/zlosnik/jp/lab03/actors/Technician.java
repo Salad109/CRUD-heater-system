@@ -2,7 +2,6 @@ package zlosnik.jp.lab03.actors;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Technician {
@@ -103,37 +102,15 @@ public class Technician {
     }
 
     public void readOrders() {
-        try (BufferedReader orderReader = new BufferedReader(new FileReader(ORDERS_PATH))) {
-            List<String> orders = orderReader.lines().toList();
-            for (String order : orders) {
-                System.out.println(order);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        List<String> orders = readAllLines(ORDERS_PATH);
+        for (String order : orders) {
+            System.out.println(order);
         }
     }
 
     public void deleteFirstOrder() {
-        List<String> orders = new LinkedList<>();
-
-        try (BufferedReader orderReader = new BufferedReader(new FileReader(ORDERS_PATH))) {
-            orderReader.readLine();
-
-            String line;
-            while ((line = orderReader.readLine()) != null) {
-                orders.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (BufferedWriter orderWriter = new BufferedWriter(new FileWriter(ORDERS_PATH))) {
-            for (String order : orders) {
-                orderWriter.write(order);
-                orderWriter.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        List<String> orders = readAllLines(ORDERS_PATH);
+        orders.removeFirst();
+        writeToFile(orders, ORDERS_PATH);
     }
 }
