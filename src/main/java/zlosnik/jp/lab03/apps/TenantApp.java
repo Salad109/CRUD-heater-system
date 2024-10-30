@@ -9,13 +9,13 @@ import java.util.Scanner;
 
 public class TenantApp {
     public static void main(String[] args) {
-        System.out.println("I'm a tenant!"); // TODO RENT
+        System.out.println("I'm a tenant!");
         DatabaseManager databaseManager = new DatabaseManager();
         Tenant tenant = null;
 
         do {
             databaseManager.printTenants();
-            System.out.println("Provide tenant ID:");
+            System.out.println("Which tenant are you? Provide your ID:");
             try {
                 Scanner scanner = new Scanner(System.in);
                 int tenantID = scanner.nextInt();
@@ -51,7 +51,9 @@ public class TenantApp {
                     System.out.println(tenant);
                     break;
                 case '2':
+                    System.out.println("Generating heat...");
                     tenant.generateHeat();
+                    System.out.println("Heat generated!");
                     break;
                 default:
                     System.out.println("Invalid input.");

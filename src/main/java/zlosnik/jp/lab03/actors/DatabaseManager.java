@@ -33,7 +33,6 @@ public class DatabaseManager {
         List<Tenant> newTenants = new ArrayList<>();
         for (Tenant tenant : tenants)
             if (tenant.getStreet().equals(street)) newTenants.add(tenant);
-
         if (newTenants.isEmpty()) throw new StreetNotFoundException(street);
         return newTenants;
     }

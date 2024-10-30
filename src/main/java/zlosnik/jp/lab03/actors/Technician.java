@@ -8,51 +8,98 @@ import java.util.List;
 public class Technician {
     private static final String READINGS_PATH = "readings.txt";
     private static final String ORDERS_PATH = "orders.txt";
+    private static final String HEAT_PATH = "heat.txt";
 
-    public void getMeterReading(Tenant tenant) {
-        double reading = tenant.getAccumulatedHeat();
+    public void logMeterReading(Tenant tenant) {
         int id = tenant.getId();
+        double reading = getHeatByID(id);
         writeReadingToFile(id, reading);
-        tenant.resetAccumulatedHeat();
     }
 
-    public void getMeterReadings(List<Tenant> tenants) {
+    public void logMeterReadings(List<Tenant> tenants) {
         for (Tenant tenant : tenants) {
-            getMeterReading(tenant);
+            logMeterReading(tenant);
         }
     }
 
-    private void writeReadingToFile(int id, double reading) {
+    private List<String> readAllLines(String fileName) {
         List<String> lines = new ArrayList<>();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(READINGS_PATH))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
-
-            if ((line = reader.readLine()) != null) {
-                lines.add(line);
-            }
-
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (Integer.parseInt(parts[0].trim()) == id) {
-                    int lastSpace = parts[parts.length - 1].lastIndexOf(" ");
-                    parts[parts.length - 1] = lastSpace != -1 ? parts[parts.length - 1].substring(0, lastSpace).trim() + " " + reading : String.valueOf(reading);
-                    line = String.join(",", parts);
-                }
                 lines.add(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return lines;
+    }
 
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(READINGS_PATH))) {
-            for (String modifiedLine : lines) {
-                writer.write(modifiedLine);
+    private void writeToFile(List<String> lines, String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            for (String updatedLine : lines) {
+                writer.write(updatedLine);
                 writer.newLine();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+    }
+
+    private double getHeatByID(int id) {
+        List<String> lines = readAllLines(HEAT_PATH);
+
+        List<String> newLines = new ArrayList<>();
+        double heatValue = 0.0;
+        for (int i = 1; i < lines.size(); i++) {
+            String line = lines.get(i);
+
+            String[] parts = line.split(", ");
+
+            if (Integer.parseInt(parts[0]) == id) {
+                heatValue = Double.parseDouble(parts[1].trim());
+                line = id + ", 0.0";  // Overwrite with zero heat value
+            }
+            newLines.add(line);  // Store each processed line
+        }
+
+        // Write all lines back to the file
+        writeToFile(newLines, HEAT_PATH);
+
+        return heatValue;  // Return the original heat value
+    }
+
+    private void writeReadingToFile(int id, double reading) {
+        List<String> lines = readAllLines(READINGS_PATH);
+        List<String> newLines = new ArrayList<>();
+
+        for (int i = 1; i < lines.size(); i++) {
+            String line = lines.get(i);
+
+            // Split line into parts by commas and trim spaces
+            String[] parts = line.split(", ");
+
+            // Check if line starts with the specified ID
+            if (Integer.parseInt(parts[0]) == id) {
+                // Replace the last numeric part with the new reading
+                String lastPart = parts[parts.length - 1];
+
+                // Find where the last number starts in the line and replace it
+                int lastSpace = lastPart.lastIndexOf(" ");
+                if (lastSpace != -1) {
+                    parts[parts.length - 1] = lastPart.substring(0, lastSpace) + " " + reading;
+                } else {
+                    parts[parts.length - 1] = String.valueOf(reading);
+                }
+
+                // Join all parts back into a single line
+                line = String.join(", ", parts);
+            }
+            newLines.add(line);
+        }
+
+        writeToFile(newLines, READINGS_PATH);
     }
 
     public void readOrders() {

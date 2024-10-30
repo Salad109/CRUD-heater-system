@@ -9,6 +9,8 @@ import java.util.Scanner;
 
 public class ManagerApp {
     public static void main(String[] args) {
+        // TODO RENT
+        // TODO Add and delete tenants across ALL(!!!) of the .txt files
         Manager manager = new Manager();
         DatabaseManager databaseManager = new DatabaseManager();
         Scanner scanner = new Scanner(System.in);

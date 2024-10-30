@@ -1,15 +1,6 @@
 package zlosnik.jp.lab03.actors;
 
-public class Heater {
-    double size;
-
-    public Heater(double size) {
-        this.size = size;
-    }
-
-    public double generateHeat() {
-        return size;
-    }
+public record Heater(double size) {
 
     @Override
     public String toString() {
