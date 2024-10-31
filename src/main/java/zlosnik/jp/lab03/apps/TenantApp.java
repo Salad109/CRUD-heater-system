@@ -34,7 +34,7 @@ public class TenantApp {
             }
         } while (tenant == null);
 
-        char choice;
+        String choice;
         Scanner scanner = new Scanner(System.in);
         do {
             int n = 0;
@@ -42,23 +42,27 @@ public class TenantApp {
             System.out.println(n++ + ". Exit");
             System.out.println(n++ + ". Read my data");
             System.out.println(n + ". Generate heat");
-            choice = scanner.nextLine().charAt(0);
+            choice = scanner.nextLine();
 
             switch (choice) {
-                case '0':
+                case "0":
                     break;
-                case '1':
+                case "1":
                     System.out.println(tenant);
                     break;
-                case '2':
+                case "2":
                     System.out.println("Generating heat...");
-                    tenant.generateHeat();
-                    System.out.println("Heat generated!");
+                    try {
+                        tenant.generateHeat();
+                        System.out.println("Heat generated!");
+                    } catch (TenantNotFoundException e) {
+                        System.out.println("Tenant not found in database.");
+                    }
                     break;
                 default:
                     System.out.println("Invalid input.");
                     break;
             }
-        } while (choice != '0');
+        } while (!choice.equals("0"));
     }
 }

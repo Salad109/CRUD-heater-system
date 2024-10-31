@@ -1,6 +1,5 @@
 package zlosnik.jp.lab03.actors;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,50 +19,40 @@ public class Tenant implements Comparable<Tenant> {
         return id;
     }
 
-    public void generateHeat() {
+    public void generateHeat() throws TenantNotFoundException {
         double generatedHeat = 0;
         for (Heater heater : heaters) {
             generatedHeat += heater.size();
         }
         generatedHeat = Math.round(generatedHeat * 1000.0) / 1000.0; // Round to 3 decimal places
-        updateHeatById(getId(), generatedHeat);
+        logHeat(getId(), generatedHeat);
     }
 
-    private void updateHeatById(int id, double generatedHeat) {
-        List<String> lines = new ArrayList<>();
+    private void logHeat(int id, double generatedHeat) throws TenantNotFoundException {
+        List<String> lines = DatabaseManager.readAllLines(HEAT_PATH);
+        List<String> newLines = new ArrayList<>();
+        boolean found = false;
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(HEAT_PATH))) {
-            String line;
+        // Add header line
+        newLines.add(lines.getFirst());
 
-            // Read and add the header line
-            if ((line = reader.readLine()) != null) {
-                lines.add(line);  // Add header to the lines list
+        for (int i = 1; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String[] parts = line.split(", ");
+
+            if (Integer.parseInt(parts[0]) == id) {
+                found = true;
+                double newHeat = Double.parseDouble(parts[1]) + generatedHeat;
+                line = id + ", " + newHeat;  // Update line with new heat value
             }
 
-            // Process each line to find the ID and update its heat value
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(", ");
-
-                if (Integer.parseInt(parts[0]) == id) {
-                    double newHeat = Double.parseDouble(parts[1]) + generatedHeat;
-                    line = id + ", " + newHeat;  // Update line with new heat value
-                }
-
-                lines.add(line);  // Store the processed line
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+            newLines.add(line);  // Store the processed line
         }
 
-        // Write all lines back to the file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(HEAT_PATH))) {
-            for (String updatedLine : lines) {
-                writer.write(updatedLine);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!found) {
+            throw new TenantNotFoundException(id);
         }
+        DatabaseManager.writeToFile(newLines, HEAT_PATH);
     }
 
     public String getStreet() {

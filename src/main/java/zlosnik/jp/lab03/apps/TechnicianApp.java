@@ -12,7 +12,7 @@ public class TechnicianApp {
         var databaseManager = new DatabaseManager();
         Scanner scanner = new Scanner(System.in);
 
-        char choice;
+        String choice;
         do {
             int n = 0;
             System.out.println("Technician app:");
@@ -22,31 +22,31 @@ public class TechnicianApp {
             System.out.println(n++ + ". Read a specific tenant");
             System.out.println(n++ + ". Read a specific street");
             System.out.println(n + ". Read all tenants");
-            choice = scanner.nextLine().charAt(0);
+            choice = scanner.nextLine();
             switch (choice) {
-                case '0':
+                case "0":
                     scanner.close();
                     break;
-                case '1':
+                case "1":
                     readOrders(technician);
                     break;
-                case '2':
+                case "2":
                     deleteOrder(technician);
                     break;
-                case '3':
+                case "3":
                     readID(scanner, databaseManager, technician);
                     break;
-                case '4':
+                case "4":
                     readStreet(scanner, databaseManager, technician);
                     break;
-                case '5':
+                case "5":
                     readAll(databaseManager, technician);
                     break;
                 default:
                     System.out.println("Invalid choice");
                     break;
             }
-        } while (choice != '0');
+        } while (!choice.equals("0"));
     }
 
     private static void readOrders(Technician technician) {
@@ -83,14 +83,18 @@ public class TechnicianApp {
             List<Tenant> tenantList = databaseManager.getTenantsByStreet(street);
             technician.logMeterReadings(tenantList);
             System.out.println("Street read complete!");
-        } catch (StreetNotFoundException e) {
-            System.out.println("Street not found.");
+        } catch (StreetNotFoundException | TenantNotFoundException e) {
+            System.out.println("Tenant not found.");
         }
     }
 
     private static void readAll(DatabaseManager databaseManager, Technician technician) {
-        System.out.println("Reading all tenants...");
-        technician.logMeterReadings(databaseManager.getAllTenants());
-        System.out.println("All tenants read complete!");
+        try {
+            System.out.println("Reading all tenants...");
+            technician.logMeterReadings(databaseManager.getAllTenants());
+            System.out.println("All tenants read complete!");
+        } catch (TenantNotFoundException e) {
+            System.out.println("Tenant not found.");
+        }
     }
 }

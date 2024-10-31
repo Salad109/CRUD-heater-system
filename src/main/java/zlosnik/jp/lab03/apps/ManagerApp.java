@@ -15,7 +15,7 @@ public class ManagerApp {
         DatabaseManager databaseManager = new DatabaseManager();
         Scanner scanner = new Scanner(System.in);
 
-        char choice;
+        String choice;
         do {
             int n = 0;
             System.out.println("Manager app:");
@@ -25,21 +25,20 @@ public class ManagerApp {
             System.out.println(n++ + ". Issue order to read a specific tenant");
             System.out.println(n++ + ". Issue order to read a specific street");
             System.out.println(n + ". Issue order to read all tenants");
-            String input = scanner.nextLine();
-            choice = input.charAt(0);
+            choice = scanner.nextLine();
             switch (choice) {
-                case '0':
+                case "0":
                     break;
-                case '1':
+                case "1":
                     System.out.println("Updating tenants...");
                     databaseManager.updateTenants();
                     System.out.println("Tenants updated!");
                     break;
-                case '2':
+                case "2":
                     System.out.println("Printing tenants...");
                     databaseManager.printTenants();
                     break;
-                case '3':
+                case "3":
                     System.out.println("Issuing order to read a specific tenant. Provide tenant ID:");
                     try {
                         int id = scanner.nextInt();
@@ -50,13 +49,13 @@ public class ManagerApp {
                         System.out.println("Invalid input.");
                     }
                     break;
-                case '4':
+                case "4":
                     System.out.println("Issuing order to read a specific street. Provide street:");
                     String street = scanner.nextLine();
                     manager.issueOrder("Read, street, " + street);
                     System.out.println("Order Issued!");
                     break;
-                case '5':
+                case "5":
                     System.out.println("Issuing order to read all tenants...");
                     manager.issueOrder("Read, all");
                     System.out.println("Order Issued!");
@@ -65,6 +64,6 @@ public class ManagerApp {
                     System.out.println("Invalid choice");
                     break;
             }
-        } while (choice != '0');
+        } while (!choice.equals("0"));
     }
 }

@@ -1,6 +1,5 @@
 package zlosnik.jp.lab03.actors;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,47 +8,24 @@ public class Technician {
     private static final String ORDERS_PATH = "orders.txt";
     private static final String HEAT_PATH = "heat.txt";
 
-    public void logMeterReading(Tenant tenant) {
+    public void logMeterReading(Tenant tenant) throws TenantNotFoundException {
         int id = tenant.getId();
         double reading = getHeatByID(id);
         writeReadingToFile(id, reading);
     }
 
-    public void logMeterReadings(List<Tenant> tenants) {
+    public void logMeterReadings(List<Tenant> tenants) throws TenantNotFoundException {
         for (Tenant tenant : tenants) {
             logMeterReading(tenant);
         }
     }
 
-    private List<String> readAllLines(String fileName) {
-        List<String> lines = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                lines.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return lines;
-    }
-
-    private void writeToFile(List<String> lines, String fileName) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-            for (String updatedLine : lines) {
-                writer.write(updatedLine);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private double getHeatByID(int id) {
-        List<String> lines = readAllLines(HEAT_PATH);
-
+    private double getHeatByID(int id) throws TenantNotFoundException {
+        List<String> lines = DatabaseManager.readAllLines(HEAT_PATH);
         List<String> newLines = new ArrayList<>();
+        boolean found = false;
+
+        newLines.add(lines.getFirst());
         double heatValue = 0.0;
         for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);
@@ -57,40 +33,37 @@ public class Technician {
             String[] parts = line.split(", ");
 
             if (Integer.parseInt(parts[0]) == id) {
+                found = true;
                 heatValue = Double.parseDouble(parts[1].trim());
                 line = id + ", 0.0";  // Overwrite with zero heat value
             }
             newLines.add(line);  // Store each processed line
         }
 
+        if (!found) {
+            throw new TenantNotFoundException(id);
+        }
+
         // Write all lines back to the file
-        writeToFile(newLines, HEAT_PATH);
+        DatabaseManager.writeToFile(newLines, HEAT_PATH);
 
         return heatValue;  // Return the original heat value
     }
 
-    private void writeReadingToFile(int id, double reading) {
-        List<String> lines = readAllLines(READINGS_PATH);
+    private void writeReadingToFile(int id, double reading) throws TenantNotFoundException {
+        List<String> lines = DatabaseManager.readAllLines(READINGS_PATH);
         List<String> newLines = new ArrayList<>();
+        boolean found = false;
 
         for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);
-
             // Split line into parts by commas and trim spaces
             String[] parts = line.split(", ");
 
             // Check if line starts with the specified ID
             if (Integer.parseInt(parts[0]) == id) {
-                // Replace the last numeric part with the new reading
-                String lastPart = parts[parts.length - 1];
-
-                // Find where the last number starts in the line and replace it
-                int lastSpace = lastPart.lastIndexOf(" ");
-                if (lastSpace != -1) {
-                    parts[parts.length - 1] = lastPart.substring(0, lastSpace) + " " + reading;
-                } else {
-                    parts[parts.length - 1] = String.valueOf(reading);
-                }
+                found = true;
+                parts[1] = String.valueOf(reading);
 
                 // Join all parts back into a single line
                 line = String.join(", ", parts);
@@ -98,19 +71,22 @@ public class Technician {
             newLines.add(line);
         }
 
-        writeToFile(newLines, READINGS_PATH);
+        if (!found) {
+            throw new TenantNotFoundException(id);
+        }
+        DatabaseManager.writeToFile(newLines, READINGS_PATH);
     }
 
     public void readOrders() {
-        List<String> orders = readAllLines(ORDERS_PATH);
+        List<String> orders = DatabaseManager.readAllLines(ORDERS_PATH);
         for (String order : orders) {
             System.out.println(order);
         }
     }
 
     public void deleteFirstOrder() {
-        List<String> orders = readAllLines(ORDERS_PATH);
+        List<String> orders = DatabaseManager.readAllLines(ORDERS_PATH);
         orders.removeFirst();
-        writeToFile(orders, ORDERS_PATH);
+        DatabaseManager.writeToFile(orders, ORDERS_PATH);
     }
 }
