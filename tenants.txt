@@ -2,4 +2,4 @@
 1, Norwida, 2.5 1.5 3.14
 2, Pilsudskiego, 2.1 3.7
 3, Norwida, 4.2 0.69
-4, Lesna, 6.9 4.02
+4, test, 3.14, 3.0

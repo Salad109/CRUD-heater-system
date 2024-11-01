@@ -3,7 +3,6 @@ package zlosnik.jp.lab03.actors;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class DatabaseManager {
     private static final String TENANTS_PATH = "tenants.txt";
@@ -43,29 +42,21 @@ public class DatabaseManager {
 
     public List<Tenant> updateTenants() {
         tenants = new ArrayList<>();
+        List<String> lines = DatabaseManager.readAllLines(TENANTS_PATH);
+        for (int i = 1; i < lines.size(); i++) {
+            String line = lines.get(i);
+            String[] parts = line.split(", ");
 
-        try (Scanner scanner = new Scanner(new File(TENANTS_PATH))) {
-            if (scanner.hasNextLine()) scanner.nextLine(); // Skip header line
+            int id = Integer.parseInt(parts[0]);
+            String street = parts[1];
 
-            while (scanner.hasNextLine()) {
-                String[] parts = scanner.nextLine().split(",");
-
-                int id = Integer.parseInt(parts[0]);
-
-                String name = parts[1];
-                if (name.startsWith(" ")) name = name.substring(1);
-
-                List<Heater> heaters = new ArrayList<>();
-                for (String sizeStr : parts[2].split(" ")) {
-                    if (!sizeStr.isEmpty()) {
-                        heaters.add(new Heater(Double.parseDouble(sizeStr)));
-                    }
-                }
-
-                tenants.add(new Tenant(id, name, heaters));
+            List<Heater> heaters = new ArrayList<>();
+            String[] heaterSizes = parts[2].split(" ");
+            for (String heaterSize : heaterSizes) {
+                heaters.add(new Heater(Double.parseDouble(heaterSize)));
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+
+            tenants.add(new Tenant(id, street, heaters));
         }
 
         tenants.sort(Tenant::compareTo); // Sort alphabetically by street
