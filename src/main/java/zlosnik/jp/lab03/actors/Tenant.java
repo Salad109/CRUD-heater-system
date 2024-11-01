@@ -29,7 +29,7 @@ public class Tenant implements Comparable<Tenant> {
     }
 
     private void logHeat(int id, double generatedHeat) throws TenantNotFoundException {
-        List<String> lines = DatabaseManager.readAllLines(HEAT_PATH);
+        List<String> lines = DatabaseManager.readFile(HEAT_PATH);
         List<String> newLines = new ArrayList<>();
         boolean found = false;
 

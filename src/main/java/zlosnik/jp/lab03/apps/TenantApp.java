@@ -10,23 +10,18 @@ import java.util.Scanner;
 public class TenantApp {
     public static void main(String[] args) {
         System.out.println("I'm a tenant!");
-        DatabaseManager databaseManager = new DatabaseManager();
         Tenant tenant = null;
 
         do {
-            databaseManager.printTenants();
+            DatabaseManager.readTenants();
             System.out.println("Which tenant are you? Provide your ID:");
             try {
                 Scanner scanner = new Scanner(System.in);
                 int tenantID = scanner.nextInt();
                 scanner.nextLine();
                 System.out.println("Reading tenant...");
-                tenant = databaseManager.getTenantByID(tenantID);
-                if (tenant != null) {
-                    System.out.println("Tenant read complete.");
-                } else {
-                    System.out.println("Tenant not found.");
-                }
+                tenant = DatabaseManager.getTenantByID(tenantID);
+                System.out.println("Tenant read complete.");
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input.");
             } catch (TenantNotFoundException e) {

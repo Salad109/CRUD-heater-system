@@ -4,21 +4,73 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseManager {
+public abstract class DatabaseManager {
     private static final String TENANTS_PATH = "tenants.txt";
-    private List<Tenant> tenants;
 
-    public DatabaseManager() {
-        tenants = updateTenants();
+    public static void createTenant(String street, List<Double> heaterSizes) {
+        List<String> files = new ArrayList<>();
+        List<List<String>> fileContents = new ArrayList<>();
+        files.add("heat.txt");
+        files.add("readings.txt");
+        files.add("rents.txt");
+        files.add("tenants.txt");
+        List<Integer> takenIds = new ArrayList<>();
+
+        // Get file contents
+        for (String file : files) {
+            fileContents.add(DatabaseManager.readFile(file));
+        }
+
+        // Find all taken IDs
+        for (List<String> lines : fileContents) {
+            for (int i = 1; i < lines.size(); i++) {
+                String line = lines.get(i);
+                String[] parts = line.split(", ");
+                if (!takenIds.contains(Integer.parseInt(parts[0]))) takenIds.add(Integer.parseInt(parts[0]));
+            }
+        }
+
+        // Find free ID to assign
+        int freeId = 0;
+        do {
+            freeId++;
+        } while (takenIds.contains(freeId));
+
+        // Remove tenants.txt from file list, treat it individually
+        files.removeLast();
+        fileContents.removeLast();
+        List<String> tenantFileContents = DatabaseManager.readFile(TENANTS_PATH);
+
+        StringBuilder heaters = new StringBuilder();
+        for (Double size : heaterSizes) {
+            heaters.append(", ").append(size);
+        }
+        tenantFileContents.add(freeId + ", " + street + heaters);
+
+        DatabaseManager.writeToFile(tenantFileContents, TENANTS_PATH);
+
+        // Add line with new ID to all files
+        for (List<String> lines : fileContents) {
+            lines.add(freeId + ", 0.0");
+        }
+
+        // Write updated content to files
+        for (int i = 0; i < files.size(); i++) {
+            DatabaseManager.writeToFile(fileContents.get(i), files.get(i));
+        }
+
+        System.out.println("Added tenant: " + tenantFileContents.getLast());
     }
 
-    public void printTenants() {
+    public static void readTenants() {
+        List<Tenant> tenants = updateTenants();
         for (Tenant tenant : tenants) {
             System.out.println(tenant);
         }
     }
 
-    public Tenant getTenantByID(int id) throws TenantNotFoundException {
+    public static Tenant getTenantByID(int id) throws TenantNotFoundException {
+        List<Tenant> tenants = updateTenants();
         for (Tenant tenant : tenants) {
             if (tenant.getId() == id) {
                 return tenant;
@@ -27,7 +79,8 @@ public class DatabaseManager {
         throw new TenantNotFoundException(id);
     }
 
-    public List<Tenant> getTenantsByStreet(String street) throws StreetNotFoundException {
+    public static List<Tenant> getTenantsByStreet(String street) throws StreetNotFoundException {
+        List<Tenant> tenants = updateTenants();
         List<Tenant> newTenants = new ArrayList<>();
         for (Tenant tenant : tenants)
             if (tenant.getStreet().equals(street)) newTenants.add(tenant);
@@ -35,14 +88,9 @@ public class DatabaseManager {
         return newTenants;
     }
 
-    public List<Tenant> getAllTenants() {
-        return tenants;
-    }
-
-
-    public List<Tenant> updateTenants() {
-        tenants = new ArrayList<>();
-        List<String> lines = DatabaseManager.readAllLines(TENANTS_PATH);
+    public static List<Tenant> updateTenants() {
+        List<Tenant> tenants = new ArrayList<>();
+        List<String> lines = DatabaseManager.readFile(TENANTS_PATH);
         for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);
             String[] parts = line.split(", ");
@@ -63,7 +111,7 @@ public class DatabaseManager {
         return tenants;
     }
 
-    public static List<String> readAllLines(String fileName) {
+    public static List<String> readFile(String fileName) {
         List<String> lines = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
@@ -85,6 +133,5 @@ public class DatabaseManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

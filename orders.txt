@@ -1,0 +1,5 @@
+Read, street, Testowa
+Read, street, 314
+Read, all
+Read, street, test
+Read, ID, 1

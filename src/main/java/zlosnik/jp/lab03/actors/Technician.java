@@ -21,7 +21,7 @@ public class Technician {
     }
 
     private double getHeatByID(int id) throws TenantNotFoundException {
-        List<String> lines = DatabaseManager.readAllLines(HEAT_PATH);
+        List<String> lines = DatabaseManager.readFile(HEAT_PATH);
         List<String> newLines = new ArrayList<>();
         boolean found = false;
 
@@ -51,7 +51,7 @@ public class Technician {
     }
 
     private void writeReadingToFile(int id, double reading) throws TenantNotFoundException {
-        List<String> lines = DatabaseManager.readAllLines(READINGS_PATH);
+        List<String> lines = DatabaseManager.readFile(READINGS_PATH);
         List<String> newLines = new ArrayList<>();
         boolean found = false;
 
@@ -78,14 +78,14 @@ public class Technician {
     }
 
     public void readOrders() {
-        List<String> orders = DatabaseManager.readAllLines(ORDERS_PATH);
+        List<String> orders = DatabaseManager.readFile(ORDERS_PATH);
         for (String order : orders) {
             System.out.println(order);
         }
     }
 
     public void deleteFirstOrder() {
-        List<String> orders = DatabaseManager.readAllLines(ORDERS_PATH);
+        List<String> orders = DatabaseManager.readFile(ORDERS_PATH);
         orders.removeFirst();
         DatabaseManager.writeToFile(orders, ORDERS_PATH);
     }

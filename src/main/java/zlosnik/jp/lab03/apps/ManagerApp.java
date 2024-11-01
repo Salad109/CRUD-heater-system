@@ -14,7 +14,6 @@ public class ManagerApp {
         // TODO RENT
         // TODO Add and delete tenants across ALL(!!!) of the .txt files
         Manager manager = new Manager();
-        DatabaseManager databaseManager = new DatabaseManager();
         Scanner scanner = new Scanner(System.in);
 
         String choice;
@@ -22,33 +21,37 @@ public class ManagerApp {
             int n = 0;
             System.out.println("Manager app:");
             System.out.println(n++ + ". Exit");
+            System.out.println(n++ + ". Create a new tenant");
+            System.out.println(n++ + ". Read tenants");
             System.out.println(n++ + ". Update tenants");
-            System.out.println(n++ + ". Print tenants");
+            System.out.println(n++ + ". Delete tenant");
             System.out.println(n++ + ". Issue order to read a specific tenant");
             System.out.println(n++ + ". Issue order to read a specific street");
             System.out.println(n++ + ". Issue order to read all tenants");
-            System.out.println(n + ". Create a new tenant");
             choice = scanner.nextLine();
             switch (choice) {
                 case "0":
                     break;
                 case "1":
-                    updateTenants(databaseManager);
+                    createTenant(scanner);
                     break;
                 case "2":
-                    printTenants(databaseManager);
+                    readTenants();
                     break;
                 case "3":
-                    issueIdRead(scanner, manager);
+                    updateTenants();
                     break;
                 case "4":
-                    issueStreetRead(scanner, manager);
+                    deleteTenant();
                     break;
                 case "5":
-                    issueAllRead(manager);
+                    issueIdRead(scanner, manager);
                     break;
                 case "6":
-                    addTenant(scanner, manager);
+                    issueStreetRead(scanner, manager);
+                    break;
+                case "7":
+                    issueAllRead(manager);
                     break;
                 default:
                     System.out.println("Invalid choice");
@@ -57,14 +60,36 @@ public class ManagerApp {
         } while (!choice.equals("0"));
     }
 
-    private static void updateTenants(DatabaseManager databaseManager) {
+    private static void createTenant(Scanner scanner) {
+        System.out.println("Provide street of the new tenant:");
+        String street = scanner.nextLine();
+
+        List<Double> heaterSizes = new ArrayList<>();
+        double input;
+        try {
+            do {
+                System.out.println("Provide next heater size(input 0 to stop adding).");
+                String line = scanner.nextLine();
+                input = Double.parseDouble(line);
+                if (input != 0) heaterSizes.add(input);
+            } while (input != 0);
+            DatabaseManager.createTenant(street, heaterSizes);
+        } catch (Exception e) {
+            System.out.println("Invalid input.");
+        }
+    }
+
+    private static void readTenants() {
+        DatabaseManager.readTenants();
+    }
+
+    private static void updateTenants() {
         System.out.println("Updating tenants...");
-        databaseManager.updateTenants();
+        DatabaseManager.updateTenants();
         System.out.println("Tenants updated!");
     }
 
-    private static void printTenants(DatabaseManager databaseManager) {
-        databaseManager.printTenants();
+    private static void deleteTenant() {
     }
 
     private static void issueIdRead(Scanner scanner, Manager manager) {
@@ -72,7 +97,7 @@ public class ManagerApp {
         try {
             int id = scanner.nextInt();
             scanner.nextLine();
-            manager.issueOrder("Read tenant, " + id);
+            manager.issueOrder("Read, ID, " + id);
             System.out.println("Order Issued!");
         } catch (InputMismatchException e) {
             System.out.println("Invalid input.");
@@ -92,22 +117,4 @@ public class ManagerApp {
         System.out.println("Order Issued!");
     }
 
-    private static void addTenant(Scanner scanner, Manager manager) {
-        System.out.println("Provide street of the new tenant:");
-        String street = scanner.nextLine();
-
-        List<Double> heaterSizes = new ArrayList<>();
-        double input;
-        try {
-            do {
-                System.out.println("Provide next heater size(input 0 to stop adding).");
-                String line = scanner.nextLine();
-                input = Double.parseDouble(line);
-                if (input != 0) heaterSizes.add(input);
-            } while (input != 0);
-            manager.addTenant(street, heaterSizes);
-        } catch (InputMismatchException e) {
-            System.out.println("Invalid input.");
-        }
-    }
 }

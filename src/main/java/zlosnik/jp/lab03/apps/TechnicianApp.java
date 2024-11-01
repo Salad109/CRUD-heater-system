@@ -9,7 +9,6 @@ import java.util.Scanner;
 public class TechnicianApp {
     public static void main(String[] args) {
         Technician technician = new Technician();
-        var databaseManager = new DatabaseManager();
         Scanner scanner = new Scanner(System.in);
 
         String choice;
@@ -34,13 +33,13 @@ public class TechnicianApp {
                     deleteOrder(technician);
                     break;
                 case "3":
-                    readID(scanner, databaseManager, technician);
+                    readID(scanner, technician);
                     break;
                 case "4":
-                    readStreet(scanner, databaseManager, technician);
+                    readStreet(scanner, technician);
                     break;
                 case "5":
-                    readAll(databaseManager, technician);
+                    readAll(technician);
                     break;
                 default:
                     System.out.println("Invalid choice");
@@ -59,13 +58,13 @@ public class TechnicianApp {
         System.out.println("Oldest order deleted!");
     }
 
-    private static void readID(Scanner scanner, DatabaseManager databaseManager, Technician technician) {
+    private static void readID(Scanner scanner, Technician technician) {
         System.out.println("Provide tenant ID:");
         try {
             String input = scanner.nextLine();
             int id = Integer.parseInt(input);
             System.out.println("Reading tenant...");
-            Tenant tenant = databaseManager.getTenantByID(id);
+            Tenant tenant = DatabaseManager.getTenantByID(id);
             technician.logMeterReading(tenant);
             System.out.println("Tenant read complete!");
         } catch (InputMismatchException | NumberFormatException e) {
@@ -75,12 +74,12 @@ public class TechnicianApp {
         }
     }
 
-    private static void readStreet(Scanner scanner, DatabaseManager databaseManager, Technician technician) {
+    private static void readStreet(Scanner scanner, Technician technician) {
         try {
             System.out.println("Provide street:");
             String street = scanner.nextLine();
             System.out.println("Reading street...");
-            List<Tenant> tenantList = databaseManager.getTenantsByStreet(street);
+            List<Tenant> tenantList = DatabaseManager.getTenantsByStreet(street);
             technician.logMeterReadings(tenantList);
             System.out.println("Street read complete!");
         } catch (StreetNotFoundException | TenantNotFoundException e) {
@@ -88,10 +87,10 @@ public class TechnicianApp {
         }
     }
 
-    private static void readAll(DatabaseManager databaseManager, Technician technician) {
+    private static void readAll(Technician technician) {
         try {
             System.out.println("Reading all tenants...");
-            technician.logMeterReadings(databaseManager.getAllTenants());
+            technician.logMeterReadings(DatabaseManager.updateTenants());
             System.out.println("All tenants read complete!");
         } catch (TenantNotFoundException e) {
             System.out.println("Tenant not found.");
