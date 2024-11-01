@@ -34,7 +34,7 @@ public class Technician {
 
             if (Integer.parseInt(parts[0]) == id) {
                 found = true;
-                heatValue = Double.parseDouble(parts[1].trim());
+                heatValue = Double.parseDouble(parts[1]);
                 line = id + ", 0.0";  // Overwrite with zero heat value
             }
             newLines.add(line);  // Store each processed line
@@ -55,6 +55,7 @@ public class Technician {
         List<String> newLines = new ArrayList<>();
         boolean found = false;
 
+        newLines.add(lines.getFirst());
         for (int i = 1; i < lines.size(); i++) {
             String line = lines.get(i);
             // Split line into parts by commas and trim spaces
@@ -63,7 +64,7 @@ public class Technician {
             // Check if line starts with the specified ID
             if (Integer.parseInt(parts[0]) == id) {
                 found = true;
-                parts[1] = String.valueOf(reading);
+                parts[1] = String.valueOf(reading + Double.parseDouble(parts[1]));
 
                 // Join all parts back into a single line
                 line = String.join(", ", parts);

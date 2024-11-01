@@ -5,14 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class DatabaseManager {
+    private static final String HEAT_PATH = "data-heat.txt";
+    private static final String READINGS_PATH = "data-readings.txt";
+    private static final String RENTS_PATH = "data-rents.txt";
     private static final String TENANTS_PATH = "data-tenants.txt";
 
     public static void createTenant(String street, List<Double> heaterSizes) {
         List<String> files = new ArrayList<>();
-        files.add("data-heat.txt");
-        files.add("data-readings.txt");
-        files.add("data-rents.txt");
-        files.add("data-tenants.txt");
+        files.add(HEAT_PATH);
+        files.add(READINGS_PATH);
+        files.add(RENTS_PATH);
+        files.add(TENANTS_PATH);
         List<Integer> takenIds = new ArrayList<>();
 
         // Get file contents
@@ -62,33 +65,6 @@ public abstract class DatabaseManager {
         System.out.println("Added tenant: " + tenantFileContents.getLast());
     }
 
-    public static void deleteTenant(int id) {
-        List<String> files = new ArrayList<>();
-        files.add("data-heat.txt");
-        files.add("data-readings.txt");
-        files.add("data-rents.txt");
-        files.add("data-tenants.txt");
-
-        // Get file contents
-        List<List<String>> fileContents = new ArrayList<>();
-        for (String file : files) {
-            fileContents.add(DatabaseManager.readFile(file));
-        }
-
-        for (List<String> lines : fileContents) {
-            for (int i = lines.size() - 1; i > 0; i--) {
-                String line = lines.get(i);
-                String[] parts = line.split(", ");
-                if (parts[0].equals(Integer.toString(id))) {
-                    lines.remove(i);
-                }
-            }
-        }
-
-        for (int i = 0; i < files.size(); i++) {
-            DatabaseManager.writeToFile(fileContents.get(i), files.get(i));
-        }
-    }
 
     public static void readTenants() {
         List<Tenant> tenants = updateTenants();
@@ -97,24 +73,6 @@ public abstract class DatabaseManager {
         }
     }
 
-    public static Tenant getTenantByID(int id) throws TenantNotFoundException {
-        List<Tenant> tenants = updateTenants();
-        for (Tenant tenant : tenants) {
-            if (tenant.getId() == id) {
-                return tenant;
-            }
-        }
-        throw new TenantNotFoundException(id);
-    }
-
-    public static List<Tenant> getTenantsByStreet(String street) throws StreetNotFoundException {
-        List<Tenant> tenants = updateTenants();
-        List<Tenant> newTenants = new ArrayList<>();
-        for (Tenant tenant : tenants)
-            if (tenant.getStreet().equals(street)) newTenants.add(tenant);
-        if (newTenants.isEmpty()) throw new StreetNotFoundException(street);
-        return newTenants;
-    }
 
     public static List<Tenant> updateTenants() {
         List<Tenant> tenants = new ArrayList<>();
@@ -137,6 +95,53 @@ public abstract class DatabaseManager {
 
         tenants.sort(Tenant::compareTo); // Sort alphabetically by street
         return tenants;
+    }
+
+    public static void deleteTenant(int id) {
+        List<String> files = new ArrayList<>();
+        files.add(HEAT_PATH);
+        files.add(READINGS_PATH);
+        files.add(RENTS_PATH);
+        files.add(TENANTS_PATH);
+
+        // Get file contents
+        List<List<String>> fileContents = new ArrayList<>();
+        for (String file : files) {
+            fileContents.add(DatabaseManager.readFile(file));
+        }
+
+        for (List<String> lines : fileContents) {
+            for (int i = lines.size() - 1; i > 0; i--) {
+                String line = lines.get(i);
+                String[] parts = line.split(", ");
+                if (parts[0].equals(Integer.toString(id))) {
+                    lines.remove(i);
+                }
+            }
+        }
+
+        for (int i = 0; i < files.size(); i++) {
+            DatabaseManager.writeToFile(fileContents.get(i), files.get(i));
+        }
+    }
+
+    public static Tenant getTenantByID(int id) throws TenantNotFoundException {
+        List<Tenant> tenants = updateTenants();
+        for (Tenant tenant : tenants) {
+            if (tenant.getId() == id) {
+                return tenant;
+            }
+        }
+        throw new TenantNotFoundException(id);
+    }
+
+    public static List<Tenant> getTenantsByStreet(String street) throws StreetNotFoundException {
+        List<Tenant> tenants = updateTenants();
+        List<Tenant> newTenants = new ArrayList<>();
+        for (Tenant tenant : tenants)
+            if (tenant.getStreet().equals(street)) newTenants.add(tenant);
+        if (newTenants.isEmpty()) throw new StreetNotFoundException(street);
+        return newTenants;
     }
 
     public static List<String> readFile(String fileName) {

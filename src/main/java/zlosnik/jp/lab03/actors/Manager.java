@@ -18,4 +18,8 @@ public class Manager {
             e.printStackTrace();
         }
     }
+
+    private double calculateRent(double reading) { // TODO
+        return reading * PRICE_PER_HEAT_UNIT;
+    }
 }

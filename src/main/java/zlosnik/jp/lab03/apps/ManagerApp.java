@@ -13,7 +13,6 @@ import java.util.Scanner;
 public class ManagerApp {
     public static void main(String[] args) {
         // TODO RENT
-        // TODO Add and delete tenants across ALL(!!!) of the .txt files
         Manager manager = new Manager();
         Scanner scanner = new Scanner(System.in);
 
@@ -28,7 +27,7 @@ public class ManagerApp {
             System.out.println(n++ + ". Delete tenant");
             System.out.println(n++ + ". Issue order to read a specific tenant");
             System.out.println(n++ + ". Issue order to read a specific street");
-            System.out.println(n++ + ". Issue order to read all tenants");
+            System.out.println(n + ". Issue order to read all tenants");
             choice = scanner.nextLine();
             switch (choice) {
                 case "0":

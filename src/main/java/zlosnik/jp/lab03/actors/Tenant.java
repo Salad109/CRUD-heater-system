@@ -42,11 +42,10 @@ public class Tenant implements Comparable<Tenant> {
 
             if (Integer.parseInt(parts[0]) == id) {
                 found = true;
-                double newHeat = Double.parseDouble(parts[1]) + generatedHeat;
-                line = id + ", " + newHeat;  // Update line with new heat value
+                parts[1] = String.valueOf(Double.parseDouble(parts[1]) + generatedHeat); // Update line with new heat value
             }
 
-            newLines.add(line);  // Store the processed line
+            newLines.add(String.join(", ", parts));  // Store the processed line
         }
 
         if (!found) {
