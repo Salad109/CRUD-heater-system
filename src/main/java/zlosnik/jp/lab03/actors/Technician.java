@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Technician {
-    private static final String READINGS_PATH = "readings.txt";
-    private static final String ORDERS_PATH = "orders.txt";
-    private static final String HEAT_PATH = "heat.txt";
+    private static final String READINGS_PATH = "data-readings.txt";
+    private static final String ORDERS_PATH = "data-orders.txt";
+    private static final String HEAT_PATH = "data-heat.txt";
 
     public void logMeterReading(Tenant tenant) throws TenantNotFoundException {
         int id = tenant.getId();

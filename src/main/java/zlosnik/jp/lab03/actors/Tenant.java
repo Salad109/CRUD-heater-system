@@ -7,7 +7,7 @@ public class Tenant implements Comparable<Tenant> {
     private final int id;
     private final String street;
     private final List<Heater> heaters = new ArrayList<>();
-    private static final String HEAT_PATH = "heat.txt";
+    private static final String HEAT_PATH = "data-heat.txt";
 
     public Tenant(int id, String street, List<Heater> heaters) {
         this.id = id;

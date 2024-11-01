@@ -5,18 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class DatabaseManager {
-    private static final String TENANTS_PATH = "tenants.txt";
+    private static final String TENANTS_PATH = "data-tenants.txt";
 
     public static void createTenant(String street, List<Double> heaterSizes) {
         List<String> files = new ArrayList<>();
-        List<List<String>> fileContents = new ArrayList<>();
-        files.add("heat.txt");
-        files.add("readings.txt");
-        files.add("rents.txt");
-        files.add("tenants.txt");
+        files.add("data-heat.txt");
+        files.add("data-readings.txt");
+        files.add("data-rents.txt");
+        files.add("data-tenants.txt");
         List<Integer> takenIds = new ArrayList<>();
 
         // Get file contents
+        List<List<String>> fileContents = new ArrayList<>();
         for (String file : files) {
             fileContents.add(DatabaseManager.readFile(file));
         }
@@ -36,7 +36,7 @@ public abstract class DatabaseManager {
             freeId++;
         } while (takenIds.contains(freeId));
 
-        // Remove tenants.txt from file list, treat it individually
+        // Remove data-tenants.txt from file list, treat it individually
         files.removeLast();
         fileContents.removeLast();
         List<String> tenantFileContents = DatabaseManager.readFile(TENANTS_PATH);
@@ -60,6 +60,34 @@ public abstract class DatabaseManager {
         }
 
         System.out.println("Added tenant: " + tenantFileContents.getLast());
+    }
+
+    public static void deleteTenant(int id) {
+        List<String> files = new ArrayList<>();
+        files.add("data-heat.txt");
+        files.add("data-readings.txt");
+        files.add("data-rents.txt");
+        files.add("data-tenants.txt");
+
+        // Get file contents
+        List<List<String>> fileContents = new ArrayList<>();
+        for (String file : files) {
+            fileContents.add(DatabaseManager.readFile(file));
+        }
+
+        for (List<String> lines : fileContents) {
+            for (int i = lines.size() - 1; i > 0; i--) {
+                String line = lines.get(i);
+                String[] parts = line.split(", ");
+                if (parts[0].equals(Integer.toString(id))) {
+                    lines.remove(i);
+                }
+            }
+        }
+
+        for (int i = 0; i < files.size(); i++) {
+            DatabaseManager.writeToFile(fileContents.get(i), files.get(i));
+        }
     }
 
     public static void readTenants() {

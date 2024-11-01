@@ -5,9 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class Manager {
-    private static final String ORDERS_PATH = "orders.txt";
-    private static final String RENTS_PATH = "rents.txt";
-    private static final String TENANTS_PATH = "tenants.txt";
+    private static final String ORDERS_PATH = "data-orders.txt";
+    private static final String RENTS_PATH = "data-rents.txt";
+    private static final String TENANTS_PATH = "data-tenants.txt";
     private static final double PRICE_PER_HEAT_UNIT = 100.0;
 
     public void issueOrder(String order) {

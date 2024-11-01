@@ -1,0 +1,8 @@
+Read, street, Testowa
+Read, street, 314
+Read, all
+Read, street, test
+Read, ID, 1
+Read, ID, 3, 2024-11-01T13:54:35.323735100Z
+Read, Street, testiung, 2024-11-01T13:54:39.953181200Z
+Read, All, , 2024-11-01T13:54:41.995247900Z

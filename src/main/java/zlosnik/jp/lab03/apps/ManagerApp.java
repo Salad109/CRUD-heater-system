@@ -3,6 +3,7 @@ package zlosnik.jp.lab03.apps;
 import zlosnik.jp.lab03.actors.DatabaseManager;
 import zlosnik.jp.lab03.actors.Manager;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -42,7 +43,7 @@ public class ManagerApp {
                     updateTenants();
                     break;
                 case "4":
-                    deleteTenant();
+                    deleteTenant(scanner);
                     break;
                 case "5":
                     issueIdRead(scanner, manager);
@@ -89,7 +90,16 @@ public class ManagerApp {
         System.out.println("Tenants updated!");
     }
 
-    private static void deleteTenant() {
+    private static void deleteTenant(Scanner scanner) {
+        System.out.println("Provide tenant ID to remove:");
+        try {
+            int id = scanner.nextInt();
+            scanner.nextLine();
+            DatabaseManager.deleteTenant(id);
+            System.out.println("Tenant removed from database!");
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input.");
+        }
     }
 
     private static void issueIdRead(Scanner scanner, Manager manager) {
@@ -97,7 +107,7 @@ public class ManagerApp {
         try {
             int id = scanner.nextInt();
             scanner.nextLine();
-            manager.issueOrder("Read, ID, " + id);
+            manager.issueOrder(order("ID", Integer.toString(id)));
             System.out.println("Order Issued!");
         } catch (InputMismatchException e) {
             System.out.println("Invalid input.");
@@ -107,14 +117,19 @@ public class ManagerApp {
     private static void issueStreetRead(Scanner scanner, Manager manager) {
         System.out.println("Issuing order to read a specific street. Provide street:");
         String street = scanner.nextLine();
-        manager.issueOrder("Read, street, " + street);
+        manager.issueOrder(order("Street", street));
         System.out.println("Order Issued!");
     }
 
     private static void issueAllRead(Manager manager) {
         System.out.println("Issuing order to read all tenants...");
-        manager.issueOrder("Read, all");
+        manager.issueOrder(order("All", ""));
         System.out.println("Order Issued!");
     }
 
+    private static String order(String type, String target) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Read, ").append(type).append(", ").append(target).append(", ").append(Instant.now());
+        return builder.toString();
+    }
 }
