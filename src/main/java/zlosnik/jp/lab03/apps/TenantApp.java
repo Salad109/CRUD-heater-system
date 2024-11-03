@@ -36,7 +36,9 @@ public class TenantApp {
             System.out.println("Tenant App:");
             System.out.println(n++ + ". Exit");
             System.out.println(n++ + ". Read my data");
-            System.out.println(n + ". Generate heat");
+            System.out.println(n++ + ". Generate heat");
+            System.out.println(n++ + ". Check my bill");
+            System.out.println(n + ". Pay my bill");
             choice = scanner.nextLine();
 
             switch (choice) {
@@ -46,18 +48,34 @@ public class TenantApp {
                     System.out.println(tenant);
                     break;
                 case "2":
-                    System.out.println("Generating heat...");
-                    try {
-                        tenant.generateHeat();
-                        System.out.println("Heat generated!");
-                    } catch (TenantNotFoundException e) {
-                        System.out.println("Tenant not found in database.");
-                    }
+                    generateHeat(tenant);
+                    break;
+                case "3":
+                    checkBill();
+                    break;
+                case "4":
+                    payBill();
                     break;
                 default:
                     System.out.println("Invalid input.");
                     break;
             }
         } while (!choice.equals("0"));
+    }
+
+    private static void generateHeat(Tenant tenant) {
+        System.out.println("Generating heat...");
+        try {
+            tenant.generateHeat();
+            System.out.println("Heat generated!");
+        } catch (TenantNotFoundException e) {
+            System.out.println("Tenant not found in database.");
+        }
+    }
+
+    private static void checkBill() {
+    }
+
+    private static void payBill() {
     }
 }

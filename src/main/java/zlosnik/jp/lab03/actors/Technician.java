@@ -4,10 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Technician {
-    private static final String READINGS_PATH = "data-readings.txt";
-    private static final String ORDERS_PATH = "data-orders.txt";
-    private static final String HEAT_PATH = "data-heat.txt";
-
     public void logMeterReading(Tenant tenant) throws TenantNotFoundException {
         int id = tenant.getId();
         double reading = getHeatByID(id);
@@ -21,7 +17,7 @@ public class Technician {
     }
 
     private double getHeatByID(int id) throws TenantNotFoundException {
-        List<String> lines = DatabaseManager.readFile(HEAT_PATH);
+        List<String> lines = DatabaseManager.readFile(DatabaseManager.HEAT_PATH);
         List<String> newLines = new ArrayList<>();
         boolean found = false;
 
@@ -45,13 +41,13 @@ public class Technician {
         }
 
         // Write all lines back to the file
-        DatabaseManager.writeToFile(newLines, HEAT_PATH);
+        DatabaseManager.writeToFile(newLines, DatabaseManager.HEAT_PATH);
 
         return heatValue;  // Return the original heat value
     }
 
     private void writeReadingToFile(int id, double reading) throws TenantNotFoundException {
-        List<String> lines = DatabaseManager.readFile(READINGS_PATH);
+        List<String> lines = DatabaseManager.readFile(DatabaseManager.READINGS_PATH);
         List<String> newLines = new ArrayList<>();
         boolean found = false;
 
@@ -75,19 +71,19 @@ public class Technician {
         if (!found) {
             throw new TenantNotFoundException(id);
         }
-        DatabaseManager.writeToFile(newLines, READINGS_PATH);
+        DatabaseManager.writeToFile(newLines, DatabaseManager.READINGS_PATH);
     }
 
     public void readOrders() {
-        List<String> orders = DatabaseManager.readFile(ORDERS_PATH);
+        List<String> orders = DatabaseManager.readFile(DatabaseManager.ORDERS_PATH);
         for (String order : orders) {
             System.out.println(order);
         }
     }
 
     public void deleteFirstOrder() {
-        List<String> orders = DatabaseManager.readFile(ORDERS_PATH);
+        List<String> orders = DatabaseManager.readFile(DatabaseManager.ORDERS_PATH);
         orders.removeFirst();
-        DatabaseManager.writeToFile(orders, ORDERS_PATH);
+        DatabaseManager.writeToFile(orders, DatabaseManager.ORDERS_PATH);
     }
 }

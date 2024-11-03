@@ -134,9 +134,7 @@ public class ManagerApp {
     }
 
     private static String order(String type, String target) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Read, ").append(type).append(", ").append(target).append(", ").append(Instant.now());
-        return builder.toString();
+        return "Read, " + type + ", " + target + ", " + Instant.now();
     }
 
     private static void bill(Scanner scanner, Manager manager) {

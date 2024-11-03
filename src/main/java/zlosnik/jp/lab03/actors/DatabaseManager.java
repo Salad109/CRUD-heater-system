@@ -3,12 +3,17 @@ package zlosnik.jp.lab03.actors;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class DatabaseManager {
-    private static final String HEAT_PATH = "data-heat.txt";
-    private static final String READINGS_PATH = "data-readings.txt";
-    private static final String RENTS_PATH = "data-rents.txt";
-    private static final String TENANTS_PATH = "data-tenants.txt";
+    public static final Logger logger = Logger.getLogger("Database manager logger");
+    public static final String HEAT_PATH = "data-heat.txt";
+    public static final String READINGS_PATH = "data-readings.txt";
+    public static final String RENTS_PATH = "data_rents.txt";
+    public static final String TENANTS_PATH = "data-tenants.txt";
+    public static final String ORDERS_PATH = "data-orders.txt";
+
 
     public static void createTenant(String street, List<Double> heaterSizes) {
         List<String> files = new ArrayList<>();
@@ -84,13 +89,13 @@ public abstract class DatabaseManager {
             int id = Integer.parseInt(parts[0]);
             String street = parts[1];
 
-            List<Heater> heaters = new ArrayList<>();
             String[] heaterSizes = parts[2].split(" ");
+            List<Double> heaterSizesParsed = new ArrayList<>();
             for (String heaterSize : heaterSizes) {
-                heaters.add(new Heater(Double.parseDouble(heaterSize)));
+                heaterSizesParsed.add(Double.parseDouble(heaterSize));
             }
 
-            tenants.add(new Tenant(id, street, heaters));
+            tenants.add(new Tenant(id, street, heaterSizesParsed));
         }
 
         tenants.sort(Tenant::compareTo); // Sort alphabetically by street
@@ -157,7 +162,7 @@ public abstract class DatabaseManager {
                 lines.add(line);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error reading file: " + fileName, e);
         }
         return lines;
     }
@@ -169,7 +174,7 @@ public abstract class DatabaseManager {
                 writer.newLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error writing to file: " + fileName, e);
         }
     }
 

@@ -7,12 +7,13 @@ public class Tenant implements Comparable<Tenant> {
     private final int id;
     private final String street;
     private final List<Heater> heaters = new ArrayList<>();
-    private static final String HEAT_PATH = "data-heat.txt";
 
-    public Tenant(int id, String street, List<Heater> heaters) {
+    public Tenant(int id, String street, List<Double> heaterSizes) {
         this.id = id;
         this.street = street;
-        this.heaters.addAll(heaters);
+        for (Double size : heaterSizes) {
+            this.heaters.add(new Heater(size));
+        }
     }
 
     public int getId() {
@@ -29,7 +30,7 @@ public class Tenant implements Comparable<Tenant> {
     }
 
     private void logHeat(int id, double generatedHeat) throws TenantNotFoundException {
-        List<String> lines = DatabaseManager.readFile(HEAT_PATH);
+        List<String> lines = DatabaseManager.readFile(DatabaseManager.HEAT_PATH);
         List<String> newLines = new ArrayList<>();
         boolean found = false;
 
@@ -51,7 +52,7 @@ public class Tenant implements Comparable<Tenant> {
         if (!found) {
             throw new TenantNotFoundException(id);
         }
-        DatabaseManager.writeToFile(newLines, HEAT_PATH);
+        DatabaseManager.writeToFile(newLines, DatabaseManager.HEAT_PATH);
     }
 
     public String getStreet() {

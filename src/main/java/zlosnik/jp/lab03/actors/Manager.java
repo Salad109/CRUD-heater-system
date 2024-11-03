@@ -5,18 +5,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class Manager {
-    private static final String ORDERS_PATH = "data-orders.txt";
-    private static final String RENTS_PATH = "data-rents.txt";
     private static final double PRICE_PER_HEAT_UNIT = 100.0;
+    private static final Logger logger = Logger.getLogger("Manager logger");
 
     public void issueOrder(String order) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(ORDERS_PATH, true))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(DatabaseManager.ORDERS_PATH, true))) {
             bw.write(order);
             bw.newLine();
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, "Error reading file: " + DatabaseManager.ORDERS_PATH, e);
         }
     }
 
@@ -27,7 +28,7 @@ public class Manager {
     public double billTenant(int id) throws TenantNotFoundException {
         double reading = DatabaseManager.getReading(id);
         double due = calculateRent(reading);
-        List<String> rents = DatabaseManager.readFile(RENTS_PATH);
+        List<String> rents = DatabaseManager.readFile(DatabaseManager.RENTS_PATH);
         List<String> newRents = new ArrayList<>();
         newRents.add(rents.getFirst());
         boolean found = false;
@@ -44,7 +45,7 @@ public class Manager {
         }
         if (!found) throw new TenantNotFoundException(id);
 
-        DatabaseManager.writeToFile(newRents, RENTS_PATH);
+        DatabaseManager.writeToFile(newRents, DatabaseManager.RENTS_PATH);
 
         return due;
     }
