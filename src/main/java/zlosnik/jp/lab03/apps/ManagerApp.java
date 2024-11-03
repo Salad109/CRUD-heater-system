@@ -13,7 +13,6 @@ import java.util.Scanner;
 
 public class ManagerApp {
     public static void main(String[] args) {
-        // TODO RENT
         Manager manager = new Manager();
         Scanner scanner = new Scanner(System.in);
 
@@ -31,8 +30,10 @@ public class ManagerApp {
             System.out.println(n++ + ". Issue order to read all tenants");
             System.out.println(n + ". Bill a tenant");
             choice = scanner.nextLine();
+
             switch (choice) {
                 case "0":
+                    scanner.close();
                     break;
                 case "1":
                     createTenant(scanner);
@@ -70,18 +71,18 @@ public class ManagerApp {
         String street = scanner.nextLine();
 
         List<Double> heaterSizes = new ArrayList<>();
-        double input;
-        try {
-            do {
+        double input = -1;
+        do {
+            try {
                 System.out.println("Provide next heater size(input 0 to stop adding).");
                 String line = scanner.nextLine();
                 input = Double.parseDouble(line);
                 if (input != 0) heaterSizes.add(input);
-            } while (input != 0);
-            DatabaseManager.createTenant(street, heaterSizes);
-        } catch (Exception e) {
-            System.out.println("Invalid input.");
-        }
+            } catch (Exception e) {
+                System.out.println("Invalid input.");
+            }
+        } while (input != 0);
+        DatabaseManager.createTenant(street, heaterSizes);
     }
 
     private static void readTenants() {
@@ -97,11 +98,10 @@ public class ManagerApp {
     private static void deleteTenant(Scanner scanner) {
         System.out.println("Provide tenant ID to remove:");
         try {
-            int id = scanner.nextInt();
-            scanner.nextLine();
+            int id = Integer.parseInt(scanner.nextLine());
             DatabaseManager.deleteTenant(id);
             System.out.println("Tenant removed from database!");
-        } catch (InputMismatchException e) {
+        } catch (InputMismatchException | NumberFormatException e) {
             System.out.println("Invalid input.");
         } catch (TenantNotFoundException e) {
             System.out.println("Tenant not found!");
@@ -111,11 +111,10 @@ public class ManagerApp {
     private static void issueIdRead(Scanner scanner, Manager manager) {
         System.out.println("Issuing order to read a specific tenant. Provide tenant ID:");
         try {
-            int id = scanner.nextInt();
-            scanner.nextLine();
+            int id = Integer.parseInt(scanner.nextLine());
             manager.issueOrder(order("ID", Integer.toString(id)));
             System.out.println("Order Issued!");
-        } catch (InputMismatchException e) {
+        } catch (InputMismatchException | NumberFormatException e) {
             System.out.println("Invalid input.");
         }
     }
@@ -123,6 +122,10 @@ public class ManagerApp {
     private static void issueStreetRead(Scanner scanner, Manager manager) {
         System.out.println("Issuing order to read a specific street. Provide street:");
         String street = scanner.nextLine();
+        if (street.isBlank()) {
+            System.out.println("Invalid input.");
+            return;
+        }
         manager.issueOrder(order("Street", street));
         System.out.println("Order Issued!");
     }
@@ -140,11 +143,10 @@ public class ManagerApp {
     private static void bill(Scanner scanner, Manager manager) {
         System.out.println("Provide tenant ID to be billed:");
         try {
-            int id = scanner.nextInt();
-            scanner.nextLine();
+            int id = Integer.parseInt(scanner.nextLine());
             double bill = manager.billTenant(id);
             System.out.println("Tenant billed for " + bill + "!");
-        } catch (InputMismatchException e) {
+        } catch (InputMismatchException | NumberFormatException e) {
             System.out.println("Invalid input.");
         } catch (TenantNotFoundException e) {
             System.out.println("Tenant not found!");

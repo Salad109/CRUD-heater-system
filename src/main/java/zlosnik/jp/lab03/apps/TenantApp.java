@@ -11,18 +11,18 @@ public class TenantApp {
     public static void main(String[] args) {
         System.out.println("I'm a tenant!");
         Tenant tenant = null;
+        Scanner scanner = new Scanner(System.in);
 
         do {
             DatabaseManager.readTenants();
             System.out.println("Which tenant are you? Provide your ID:");
             try {
-                Scanner scanner = new Scanner(System.in);
-                int tenantID = scanner.nextInt();
+                int id = Integer.parseInt(scanner.nextLine());
                 scanner.nextLine();
                 System.out.println("Reading tenant...");
-                tenant = DatabaseManager.getTenantByID(tenantID);
+                tenant = DatabaseManager.getTenantByID(id);
                 System.out.println("Tenant read complete.");
-            } catch (InputMismatchException e) {
+            } catch (InputMismatchException | NumberFormatException e) {
                 System.out.println("Invalid input.");
             } catch (TenantNotFoundException e) {
                 System.out.println("Tenant not found.");
@@ -30,7 +30,6 @@ public class TenantApp {
         } while (tenant == null);
 
         String choice;
-        Scanner scanner = new Scanner(System.in);
         do {
             int n = 0;
             System.out.println("Tenant App:");
@@ -43,24 +42,29 @@ public class TenantApp {
 
             switch (choice) {
                 case "0":
+                    scanner.close();
                     break;
                 case "1":
-                    System.out.println(tenant);
+                    print(tenant);
                     break;
                 case "2":
                     generateHeat(tenant);
                     break;
                 case "3":
-                    checkBill();
+                    checkBill(tenant);
                     break;
                 case "4":
-                    payBill();
+                    payBill(tenant, scanner);
                     break;
                 default:
                     System.out.println("Invalid input.");
                     break;
             }
         } while (!choice.equals("0"));
+    }
+
+    private static void print(Tenant tenant) {
+        System.out.println(tenant);
     }
 
     private static void generateHeat(Tenant tenant) {
@@ -73,9 +77,32 @@ public class TenantApp {
         }
     }
 
-    private static void checkBill() {
+
+    private static void checkBill(Tenant tenant) {
+        try {
+            double bill = tenant.getBill();
+            System.out.println("Your bill is " + bill);
+        } catch (TenantNotFoundException e) {
+            System.out.println("Tenant not found in database.");
+        }
     }
 
-    private static void payBill() {
+    private static void payBill(Tenant tenant, Scanner scanner) {
+        System.out.println("How much would you like to pay off?");
+        double payAmount;
+        try {
+            String line = scanner.nextLine();
+            payAmount = Double.parseDouble(line);
+            if (payAmount < 0) {
+                System.out.println("Payment amount must be greater than 0.");
+                return;
+            }
+            tenant.payBill(payAmount);
+            System.out.println("Bill paid successfully!");
+        } catch (InputMismatchException | NumberFormatException e) {
+            System.out.println("Invalid input.");
+        } catch (TenantNotFoundException e) {
+            System.out.println("Tenant not found in database.");
+        }
     }
 }

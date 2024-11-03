@@ -21,31 +21,31 @@ public class Manager {
         }
     }
 
-    private double calculateRent(double reading) {
+    private double calculateBill(double reading) {
         return reading * PRICE_PER_HEAT_UNIT;
     }
 
     public double billTenant(int id) throws TenantNotFoundException {
         double reading = DatabaseManager.getReading(id);
-        double due = calculateRent(reading);
-        List<String> rents = DatabaseManager.readFile(DatabaseManager.RENTS_PATH);
-        List<String> newRents = new ArrayList<>();
-        newRents.add(rents.getFirst());
+        double due = calculateBill(reading);
+        List<String> billList = DatabaseManager.readFile(DatabaseManager.BILLS_PATH);
+        List<String> newBills = new ArrayList<>();
+        newBills.add(billList.getFirst());
         boolean found = false;
 
-        for (int i = 1; i < rents.size(); i++) {
-            String line = rents.get(i);
+        for (int i = 1; i < billList.size(); i++) {
+            String line = billList.get(i);
             String[] parts = line.split(", ");
             if (Integer.parseInt(parts[0]) == id) {
-                due += Double.parseDouble(parts[1]); // Add new due rent to existing due
+                due += Double.parseDouble(parts[1]); // Add new due to existing due
                 found = true;
                 parts[1] = Double.toString(due);
             }
-            newRents.add(String.join(", ", parts));
+            newBills.add(String.join(", ", parts));
         }
         if (!found) throw new TenantNotFoundException(id);
 
-        DatabaseManager.writeToFile(newRents, DatabaseManager.RENTS_PATH);
+        DatabaseManager.writeToFile(newBills, DatabaseManager.BILLS_PATH);
 
         return due;
     }

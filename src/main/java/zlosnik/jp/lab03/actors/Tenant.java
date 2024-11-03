@@ -49,10 +49,47 @@ public class Tenant implements Comparable<Tenant> {
             newLines.add(String.join(", ", parts));  // Store the processed line
         }
 
-        if (!found) {
-            throw new TenantNotFoundException(id);
-        }
+        if (!found) throw new TenantNotFoundException(id);
         DatabaseManager.writeToFile(newLines, DatabaseManager.HEAT_PATH);
+    }
+
+    public Double getBill() throws TenantNotFoundException {
+        List<String> billList = DatabaseManager.readFile(DatabaseManager.BILLS_PATH);
+        Double bill = null;
+        for (int i = 1; i < billList.size(); i++) {
+            String line = billList.get(i);
+            String[] parts = line.split(", ");
+            if (Integer.parseInt(parts[0]) == getId()) {
+                bill = Double.parseDouble(parts[1]);
+                break;
+            }
+        }
+        if (bill == null) {
+            throw new TenantNotFoundException(getId());
+        }
+        return bill;
+    }
+
+    public void payBill(double payAmount) throws TenantNotFoundException {
+        List<String> billList = DatabaseManager.readFile(DatabaseManager.BILLS_PATH);
+        List<String> newBillList = new ArrayList<>();
+        boolean found = false;
+        newBillList.add(billList.getFirst());
+
+        for (int i = 1; i < billList.size(); i++) {
+            String line = billList.get(i);
+            String[] parts = line.split(", ");
+            if (Integer.parseInt(parts[0]) == getId()) {
+                double bill = Double.parseDouble(parts[1]) - payAmount;
+                parts[1] = Double.toString(bill);
+                found = true;
+            }
+            newBillList.add(String.join(", ", parts));
+        }
+
+        if (!found) throw new TenantNotFoundException(getId());
+
+        DatabaseManager.writeToFile(newBillList, DatabaseManager.BILLS_PATH);
     }
 
     public String getStreet() {

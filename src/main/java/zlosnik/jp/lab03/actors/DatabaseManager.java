@@ -10,7 +10,7 @@ public abstract class DatabaseManager {
     public static final Logger logger = Logger.getLogger("Database manager logger");
     public static final String HEAT_PATH = "data-heat.txt";
     public static final String READINGS_PATH = "data-readings.txt";
-    public static final String RENTS_PATH = "data_rents.txt";
+    public static final String BILLS_PATH = "data-bills.txt";
     public static final String TENANTS_PATH = "data-tenants.txt";
     public static final String ORDERS_PATH = "data-orders.txt";
 
@@ -19,7 +19,7 @@ public abstract class DatabaseManager {
         List<String> files = new ArrayList<>();
         files.add(HEAT_PATH);
         files.add(READINGS_PATH);
-        files.add(RENTS_PATH);
+        files.add(BILLS_PATH);
         files.add(TENANTS_PATH);
         List<Integer> takenIds = new ArrayList<>();
 
@@ -106,7 +106,7 @@ public abstract class DatabaseManager {
         List<String> files = new ArrayList<>();
         files.add(HEAT_PATH);
         files.add(READINGS_PATH);
-        files.add(RENTS_PATH);
+        files.add(BILLS_PATH);
         files.add(TENANTS_PATH);
 
         boolean found = false;

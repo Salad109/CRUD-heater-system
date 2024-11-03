@@ -10,9 +10,13 @@ public class Technician {
         writeReadingToFile(id, reading);
     }
 
-    public void logMeterReadings(List<Tenant> tenants) throws TenantNotFoundException {
+    public void logMeterReadings(List<Tenant> tenants) throws StreetNotFoundException {
         for (Tenant tenant : tenants) {
-            logMeterReading(tenant);
+            try {
+                logMeterReading(tenant);
+            } catch (TenantNotFoundException e) {
+                throw new StreetNotFoundException(tenant.getStreet());
+            }
         }
     }
 
@@ -36,9 +40,7 @@ public class Technician {
             newLines.add(line);  // Store each processed line
         }
 
-        if (!found) {
-            throw new TenantNotFoundException(id);
-        }
+        if (!found) throw new TenantNotFoundException(id);
 
         // Write all lines back to the file
         DatabaseManager.writeToFile(newLines, DatabaseManager.HEAT_PATH);
@@ -68,9 +70,7 @@ public class Technician {
             newLines.add(line);
         }
 
-        if (!found) {
-            throw new TenantNotFoundException(id);
-        }
+        if (!found) throw new TenantNotFoundException(id);
         DatabaseManager.writeToFile(newLines, DatabaseManager.READINGS_PATH);
     }
 

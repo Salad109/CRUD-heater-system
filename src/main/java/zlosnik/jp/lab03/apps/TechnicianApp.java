@@ -10,7 +10,6 @@ public class TechnicianApp {
     public static void main(String[] args) {
         Technician technician = new Technician();
         Scanner scanner = new Scanner(System.in);
-
         String choice;
         do {
             int n = 0;
@@ -61,8 +60,8 @@ public class TechnicianApp {
     private static void readID(Scanner scanner, Technician technician) {
         System.out.println("Provide tenant ID:");
         try {
-            String input = scanner.nextLine();
-            int id = Integer.parseInt(input);
+            int id = Integer.parseInt(scanner.nextLine());
+            scanner.nextLine();
             System.out.println("Reading tenant...");
             Tenant tenant = DatabaseManager.getTenantByID(id);
             technician.logMeterReading(tenant);
@@ -82,7 +81,7 @@ public class TechnicianApp {
             List<Tenant> tenantList = DatabaseManager.getTenantsByStreet(street);
             technician.logMeterReadings(tenantList);
             System.out.println("Street read complete!");
-        } catch (StreetNotFoundException | TenantNotFoundException e) {
+        } catch (StreetNotFoundException e) {
             System.out.println("Tenant not found.");
         }
     }
@@ -92,8 +91,8 @@ public class TechnicianApp {
             System.out.println("Reading all tenants...");
             technician.logMeterReadings(DatabaseManager.updateTenants());
             System.out.println("All tenants read complete!");
-        } catch (TenantNotFoundException e) {
-            System.out.println("Tenant not found.");
+        } catch (StreetNotFoundException e) {
+            System.out.println("Error reading all tenants.");
         }
     }
 }
