@@ -2,6 +2,7 @@ package zlosnik.jp.lab03.apps;
 
 import zlosnik.jp.lab03.actors.DatabaseManager;
 import zlosnik.jp.lab03.actors.Manager;
+import zlosnik.jp.lab03.actors.TenantNotFoundException;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -27,7 +28,8 @@ public class ManagerApp {
             System.out.println(n++ + ". Delete tenant");
             System.out.println(n++ + ". Issue order to read a specific tenant");
             System.out.println(n++ + ". Issue order to read a specific street");
-            System.out.println(n + ". Issue order to read all tenants");
+            System.out.println(n++ + ". Issue order to read all tenants");
+            System.out.println(n + ". Bill a tenant");
             choice = scanner.nextLine();
             switch (choice) {
                 case "0":
@@ -52,6 +54,9 @@ public class ManagerApp {
                     break;
                 case "7":
                     issueAllRead(manager);
+                    break;
+                case "8":
+                    bill(scanner, manager);
                     break;
                 default:
                     System.out.println("Invalid choice");
@@ -98,6 +103,8 @@ public class ManagerApp {
             System.out.println("Tenant removed from database!");
         } catch (InputMismatchException e) {
             System.out.println("Invalid input.");
+        } catch (TenantNotFoundException e) {
+            System.out.println("Tenant not found!");
         }
     }
 
@@ -130,5 +137,19 @@ public class ManagerApp {
         StringBuilder builder = new StringBuilder();
         builder.append("Read, ").append(type).append(", ").append(target).append(", ").append(Instant.now());
         return builder.toString();
+    }
+
+    private static void bill(Scanner scanner, Manager manager) {
+        System.out.println("Provide tenant ID to be billed:");
+        try {
+            int id = scanner.nextInt();
+            scanner.nextLine();
+            double bill = manager.billTenant(id);
+            System.out.println("Tenant billed for " + bill + "!");
+        } catch (InputMismatchException e) {
+            System.out.println("Invalid input.");
+        } catch (TenantNotFoundException e) {
+            System.out.println("Tenant not found!");
+        }
     }
 }

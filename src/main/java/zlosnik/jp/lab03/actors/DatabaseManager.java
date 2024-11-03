@@ -97,12 +97,14 @@ public abstract class DatabaseManager {
         return tenants;
     }
 
-    public static void deleteTenant(int id) {
+    public static void deleteTenant(int id) throws TenantNotFoundException {
         List<String> files = new ArrayList<>();
         files.add(HEAT_PATH);
         files.add(READINGS_PATH);
         files.add(RENTS_PATH);
         files.add(TENANTS_PATH);
+
+        boolean found = false;
 
         // Get file contents
         List<List<String>> fileContents = new ArrayList<>();
@@ -116,9 +118,12 @@ public abstract class DatabaseManager {
                 String[] parts = line.split(", ");
                 if (parts[0].equals(Integer.toString(id))) {
                     lines.remove(i);
+                    found = true;
                 }
             }
         }
+
+        if (!found) throw new TenantNotFoundException(id);
 
         for (int i = 0; i < files.size(); i++) {
             DatabaseManager.writeToFile(fileContents.get(i), files.get(i));
@@ -166,5 +171,27 @@ public abstract class DatabaseManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static double getReading(int id) throws TenantNotFoundException {
+        List<String> readings = DatabaseManager.readFile(READINGS_PATH);
+        List<String> newReadings = new ArrayList<>();
+        newReadings.add(readings.getFirst());
+        double reading = 0;
+        boolean found = false;
+        for (int i = 1; i < readings.size(); i++) {
+            String line = readings.get(i);
+            String[] parts = line.split(", ");
+            if (Integer.parseInt(parts[0]) == id) {
+                reading = Double.parseDouble(parts[1]);
+                found = true;
+                parts[1] = "0.0";
+            }
+            newReadings.add(String.join(", ", parts));
+        }
+        if (!found) throw new TenantNotFoundException(id);
+
+        DatabaseManager.writeToFile(newReadings, READINGS_PATH);
+        return reading;
     }
 }
