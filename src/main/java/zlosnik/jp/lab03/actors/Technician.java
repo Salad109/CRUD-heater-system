@@ -1,17 +1,18 @@
 package zlosnik.jp.lab03.actors;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Technician {
-    public void logMeterReading(Tenant tenant) throws TenantNotFoundException {
+    public void logMeterReading(Tenant tenant) throws TenantNotFoundException, IOException {
         int id = tenant.getId();
         double reading = getHeatByID(id);
         writeReadingToFile(id, reading);
     }
 
-    public void logMeterReadings(List<Tenant> tenants) throws StreetNotFoundException {
+    public void logMeterReadings(List<Tenant> tenants) throws StreetNotFoundException, IOException {
         for (Tenant tenant : tenants) {
             try {
                 logMeterReading(tenant);
@@ -21,22 +22,26 @@ public class Technician {
         }
     }
 
-    private double getHeatByID(int id) {
+    private double getHeatByID(int id) throws TenantNotFoundException {
         Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
-        List<String> lines = DatabaseManager.readFile(dataPath);
-        double heatValue;
-        String dataLine = lines.get(1);
-        String[] parts = dataLine.split(", ");
-        heatValue = Double.parseDouble(parts[3]);
-        parts[3] = "0.0";
-        dataLine = String.join(", ", parts);
-        lines.set(1, dataLine);
-        DatabaseManager.writeToFile(lines, dataPath);
+        try {
+            List<String> lines = DatabaseManager.readFile(dataPath);
+            double heatValue;
+            String dataLine = lines.get(1);
+            String[] parts = dataLine.split(", ");
+            heatValue = Double.parseDouble(parts[3]);
+            parts[3] = "0.0";
+            dataLine = String.join(", ", parts);
+            lines.set(1, dataLine);
+            DatabaseManager.writeToFile(lines, dataPath);
+            return heatValue;  // Return the original heat value
+        } catch (IOException e) {
+            throw new TenantNotFoundException(id);
+        }
 
-        return heatValue;  // Return the original heat value
     }
 
-    private void writeReadingToFile(int id, double reading) throws TenantNotFoundException {
+    private void writeReadingToFile(int id, double reading) throws TenantNotFoundException, IOException {
         List<String> lines = DatabaseManager.readFile(DatabaseManager.READINGS_PATH);
         List<String> newLines = new ArrayList<>();
         boolean found = false;
@@ -62,14 +67,14 @@ public class Technician {
         DatabaseManager.writeToFile(newLines, DatabaseManager.READINGS_PATH);
     }
 
-    public void readOrders() {
+    public void readOrders() throws IOException {
         List<String> orders = DatabaseManager.readFile(DatabaseManager.ORDERS_PATH);
         for (String order : orders) {
             System.out.println(order);
         }
     }
 
-    public void deleteFirstOrder() {
+    public void deleteOldestOrder() throws IOException {
         List<String> orders = DatabaseManager.readFile(DatabaseManager.ORDERS_PATH);
         orders.removeFirst();
         DatabaseManager.writeToFile(orders, DatabaseManager.ORDERS_PATH);

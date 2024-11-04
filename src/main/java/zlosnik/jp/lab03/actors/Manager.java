@@ -17,7 +17,8 @@ public class Manager {
             bw.write(order);
             bw.newLine();
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Error reading file: " + DatabaseManager.ORDERS_PATH, e);
+            String errorMessage = "Error reading file: " + DatabaseManager.ORDERS_PATH;
+            logger.log(Level.SEVERE, errorMessage, e);
         }
     }
 
@@ -25,19 +26,9 @@ public class Manager {
         return reading * PRICE_PER_HEAT_UNIT;
     }
 
-    public double billTenant(int id) throws TenantNotFoundException {
-        Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id));
-        dataPath = dataPath.resolve(id + ".txt");
-        List<String> dataFileContents = DatabaseManager.readFile(dataPath);
-        String dataLine = dataFileContents.get(1);
-        String[] parts = dataLine.split(", ");
-        double newBill = Double.parseDouble(parts[3]) + calculateBill(DatabaseManager.getReading(id));
-        parts[3] = Double.toString(newBill);
-        dataLine = String.join(", ", parts);
-        dataFileContents.set(1, dataLine);
-        DatabaseManager.writeToFile(dataFileContents, dataPath);
-
-        return newBill;
+    public double billTenant(int id) throws TenantNotFoundException, IOException { // TODO do wyjebania, ma być na podstawie data-readings.txt
+        List<String> readings = DatabaseManager.readFile(DatabaseManager.READINGS_PATH);
+        for(int i = 1; i < readings.size(); i++) {}
+        return 0.0;
     }
-
 }
