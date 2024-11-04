@@ -1,0 +1,2 @@
+# ID, Street, heater sizes, accumulated heat, bill
+3, Piwo, 2.5 4, 1.0, 7.13

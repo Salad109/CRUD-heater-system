@@ -4,6 +4,7 @@ import zlosnik.jp.lab03.actors.DatabaseManager;
 import zlosnik.jp.lab03.actors.Manager;
 import zlosnik.jp.lab03.actors.TenantNotFoundException;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
@@ -78,11 +79,15 @@ public class ManagerApp {
                 String line = scanner.nextLine();
                 input = Double.parseDouble(line);
                 if (input != 0) heaterSizes.add(input);
-            } catch (Exception e) {
+            } catch (InputMismatchException | NumberFormatException e) {
                 System.out.println("Invalid input.");
             }
         } while (input != 0);
-        DatabaseManager.createTenant(street, heaterSizes);
+        try {
+            DatabaseManager.createTenant(street, heaterSizes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void readTenants() {
@@ -98,7 +103,8 @@ public class ManagerApp {
     private static void deleteTenant(Scanner scanner) {
         System.out.println("Provide tenant ID to remove:");
         try {
-            int id = Integer.parseInt(scanner.nextLine());
+            String input = scanner.nextLine();
+            int id = Integer.parseInt(input);
             DatabaseManager.deleteTenant(id);
             System.out.println("Tenant removed from database!");
         } catch (InputMismatchException | NumberFormatException e) {

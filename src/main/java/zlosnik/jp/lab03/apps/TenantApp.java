@@ -2,7 +2,6 @@ package zlosnik.jp.lab03.apps;
 
 import zlosnik.jp.lab03.actors.DatabaseManager;
 import zlosnik.jp.lab03.actors.Tenant;
-import zlosnik.jp.lab03.actors.TenantNotFoundException;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -24,8 +23,6 @@ public class TenantApp {
                 System.out.println("Tenant read complete.");
             } catch (InputMismatchException | NumberFormatException e) {
                 System.out.println("Invalid input.");
-            } catch (TenantNotFoundException e) {
-                System.out.println("Tenant not found.");
             }
         } while (tenant == null);
 
@@ -69,22 +66,14 @@ public class TenantApp {
 
     private static void generateHeat(Tenant tenant) {
         System.out.println("Generating heat...");
-        try {
-            tenant.generateHeat();
-            System.out.println("Heat generated!");
-        } catch (TenantNotFoundException e) {
-            System.out.println("Tenant not found in database.");
-        }
+        tenant.generateHeat();
+        System.out.println("Heat generated!");
     }
 
 
     private static void checkBill(Tenant tenant) {
-        try {
-            double bill = tenant.getBill();
-            System.out.println("Your bill is " + bill);
-        } catch (TenantNotFoundException e) {
-            System.out.println("Tenant not found in database.");
-        }
+        double bill = tenant.getBill();
+        System.out.println("Your bill is " + bill);
     }
 
     private static void payBill(Tenant tenant, Scanner scanner) {
@@ -101,8 +90,6 @@ public class TenantApp {
             System.out.println("Bill paid successfully!");
         } catch (InputMismatchException | NumberFormatException e) {
             System.out.println("Invalid input.");
-        } catch (TenantNotFoundException e) {
-            System.out.println("Tenant not found in database.");
         }
     }
 }

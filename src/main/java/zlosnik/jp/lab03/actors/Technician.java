@@ -1,5 +1,6 @@
 package zlosnik.jp.lab03.actors;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,30 +21,17 @@ public class Technician {
         }
     }
 
-    private double getHeatByID(int id) throws TenantNotFoundException {
-        List<String> lines = DatabaseManager.readFile(DatabaseManager.HEAT_PATH);
-        List<String> newLines = new ArrayList<>();
-        boolean found = false;
-
-        newLines.add(lines.getFirst());
-        double heatValue = 0.0;
-        for (int i = 1; i < lines.size(); i++) {
-            String line = lines.get(i);
-
-            String[] parts = line.split(", ");
-
-            if (Integer.parseInt(parts[0]) == id) {
-                found = true;
-                heatValue = Double.parseDouble(parts[1]);
-                line = id + ", 0.0";  // Overwrite with zero heat value
-            }
-            newLines.add(line);  // Store each processed line
-        }
-
-        if (!found) throw new TenantNotFoundException(id);
-
-        // Write all lines back to the file
-        DatabaseManager.writeToFile(newLines, DatabaseManager.HEAT_PATH);
+    private double getHeatByID(int id) {
+        Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
+        List<String> lines = DatabaseManager.readFile(dataPath);
+        double heatValue;
+        String dataLine = lines.get(1);
+        String[] parts = dataLine.split(", ");
+        heatValue = Double.parseDouble(parts[3]);
+        parts[3] = "0.0";
+        dataLine = String.join(", ", parts);
+        lines.set(1, dataLine);
+        DatabaseManager.writeToFile(lines, dataPath);
 
         return heatValue;  // Return the original heat value
     }
