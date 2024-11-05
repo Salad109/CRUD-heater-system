@@ -5,13 +5,13 @@ import zlosnik.jp.lab03.actors.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.InputMismatchException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class TechnicianApp {
     public static void main(String[] args) {
         Technician technician = new Technician();
-        BufferedReader scanner = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String choice = "0";
         do {
             int n = 0;
@@ -23,10 +23,10 @@ public class TechnicianApp {
             System.out.println(n++ + ". Read a specific street");
             System.out.println(n + ". Read all tenants");
             try {
-                choice = scanner.readLine();
+                choice = reader.readLine();
                 switch (choice) {
                     case "0":
-                        scanner.close();
+                        reader.close();
                         break;
                     case "1":
                         readOrders(technician);
@@ -35,10 +35,10 @@ public class TechnicianApp {
                         deleteOrder(technician);
                         break;
                     case "3":
-                        readID(scanner, technician);
+                        readID(reader, technician);
                         break;
                     case "4":
-                        readStreet(scanner, technician);
+                        readStreet(reader, technician);
                         break;
                     case "5":
                         readAll(technician);
@@ -68,18 +68,20 @@ public class TechnicianApp {
             System.out.println("Oldest order deleted!");
         } catch (IOException e) {
             System.out.println("Failed to delete oldest order.");
+        } catch (NoSuchElementException e) {
+            System.out.println("Order list is already empty.");
         }
     }
 
-    private static void readID(BufferedReader scanner, Technician technician) {
+    private static void readID(BufferedReader reader, Technician technician) {
         System.out.println("Provide tenant ID:");
         try {
-            int id = Integer.parseInt(scanner.readLine());
+            int id = Integer.parseInt(reader.readLine());
             System.out.println("Reading tenant...");
             Tenant tenant = DatabaseManager.getTenantByID(id);
             technician.logMeterReading(tenant);
             System.out.println("Tenant read complete!");
-        } catch (InputMismatchException | NumberFormatException e) {
+        } catch (NumberFormatException e) {
             System.out.println("Invalid input.");
         } catch (TenantNotFoundException e) {
             System.out.println("Tenant not found.");
@@ -88,18 +90,18 @@ public class TechnicianApp {
         }
     }
 
-    private static void readStreet(BufferedReader scanner, Technician technician) {
+    private static void readStreet(BufferedReader reader, Technician technician) {
         try {
             System.out.println("Provide street:");
-            String street = scanner.readLine();
+            String street = reader.readLine();
             System.out.println("Reading street...");
             List<Tenant> tenantList = DatabaseManager.getTenantsByStreet(street);
             technician.logMeterReadings(tenantList);
             System.out.println("Street read complete!");
         } catch (StreetNotFoundException e) {
-            System.out.println("Tenant not found.");
+            System.out.println("Street not found.");
         } catch (IOException e) {
-            System.out.println("Failed to log meter reading.");
+            System.out.println("Invalid input.");
         }
     }
 
@@ -110,8 +112,6 @@ public class TechnicianApp {
             System.out.println("All tenants read complete!");
         } catch (StreetNotFoundException e) {
             System.out.println("Error reading all tenants.");
-        } catch (IOException e) {
-            System.out.println("Failed to log meter reading.");
         }
     }
 }

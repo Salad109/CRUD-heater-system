@@ -8,18 +8,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.InputMismatchException;
+import java.util.List;
 
 public class TenantApp {
     public static void main(String[] args) {
         System.out.println("I'm a tenant!");
         Tenant tenant = null;
-        BufferedReader scanner = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         do {
             DatabaseManager.readTenants();
             System.out.println("Which tenant are you? Provide your ID:");
             try {
-                int id = Integer.parseInt(scanner.readLine());
+                int id = Integer.parseInt(reader.readLine());
                 System.out.println("Reading tenant...");
                 tenant = DatabaseManager.getTenantByID(id);
                 System.out.println("Tenant read complete.");
@@ -38,13 +39,14 @@ public class TenantApp {
             System.out.println(n++ + ". Read my data");
             System.out.println(n++ + ". Generate heat");
             System.out.println(n++ + ". Check my bill");
-            System.out.println(n + ". Pay my bill");
+            System.out.println(n++ + ". Pay my bill");
+            System.out.println(n + ". View my billing history");
             try {
-                choice = scanner.readLine();
+                choice = reader.readLine();
 
                 switch (choice) {
                     case "0":
-                        scanner.close();
+                        reader.close();
                         break;
                     case "1":
                         print(tenant);
@@ -56,7 +58,10 @@ public class TenantApp {
                         checkBill(tenant);
                         break;
                     case "4":
-                        payBill(tenant, scanner);
+                        payBill(tenant, reader);
+                        break;
+                    case "5":
+                        viewBillingHistory(tenant);
                         break;
                     default:
                         System.out.println("Invalid input.");
@@ -98,11 +103,11 @@ public class TenantApp {
         }
     }
 
-    private static void payBill(Tenant tenant, BufferedReader scanner) {
+    private static void payBill(Tenant tenant, BufferedReader reader) {
         System.out.println("How much would you like to pay off?");
         double payAmount;
         try {
-            String line = scanner.readLine();
+            String line = reader.readLine();
             payAmount = Double.parseDouble(line);
             if (payAmount < 0) {
                 System.out.println("Payment amount must be greater than 0.");
@@ -114,6 +119,17 @@ public class TenantApp {
             System.out.println("Invalid input.");
         } catch (IOException e) {
             System.out.println("Failed to pay bill.");
+        }
+    }
+
+    private static void viewBillingHistory(Tenant tenant) {
+        try {
+            List<String> lines = DatabaseManager.readFile(DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(tenant.getId())).resolve("payment-logs.txt"));
+            for (String line : lines) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            System.out.println("Tenant not found.");
         }
     }
 }

@@ -1,2 +1,2 @@
 # ID, Street, heater sizes, accumulated heat, bill
-2, Testowa, 1.1 3.14, 5.0, 3.63
+2, Testowa, 1.1 3.14, 0.0, 3.63

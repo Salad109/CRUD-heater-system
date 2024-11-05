@@ -1,7 +1,10 @@
 package zlosnik.jp.lab03.actors;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +67,16 @@ public class Tenant implements Comparable<Tenant> {
         line = String.join(", ", parts);
         lines.set(1, line);
         DatabaseManager.writeToFile(lines, dataPath);
+        logBill(payAmount);
+    }
+
+    private void logBill(double payAmount) throws IOException {
+        Path logPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("payment-logs.txt");
+        String logMessage = "Tenant paid " + payAmount + " at " + Instant.now();
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(logPath.toString(), true))) {
+            bw.write(logMessage);
+            bw.newLine();
+        }
     }
 
     public String getStreet() {

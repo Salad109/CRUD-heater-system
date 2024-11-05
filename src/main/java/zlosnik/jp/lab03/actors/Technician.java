@@ -4,15 +4,20 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Technician {
-    public void logMeterReading(Tenant tenant) throws TenantNotFoundException, IOException {
+    public void logMeterReading(Tenant tenant) throws TenantNotFoundException {
         int id = tenant.getId();
-        double reading = getHeatByID(id);
-        writeReadingToFile(id, reading);
+        try {
+            double reading = getHeatByID(id);
+            writeReadingToFile(id, reading);
+        } catch (IOException e) {
+            throw new TenantNotFoundException(id);
+        }
     }
 
-    public void logMeterReadings(List<Tenant> tenants) throws StreetNotFoundException, IOException {
+    public void logMeterReadings(List<Tenant> tenants) throws StreetNotFoundException {
         for (Tenant tenant : tenants) {
             try {
                 logMeterReading(tenant);
@@ -74,7 +79,7 @@ public class Technician {
         }
     }
 
-    public void deleteOldestOrder() throws IOException {
+    public void deleteOldestOrder() throws IOException, NoSuchElementException {
         List<String> orders = DatabaseManager.readFile(DatabaseManager.ORDERS_PATH);
         orders.removeFirst();
         DatabaseManager.writeToFile(orders, DatabaseManager.ORDERS_PATH);
