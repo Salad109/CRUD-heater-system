@@ -23,7 +23,7 @@ public class ManagerApp {
             System.out.println(n++ + ". Exit");
             System.out.println(n++ + ". Create a new tenant");
             System.out.println(n++ + ". Read tenants");
-            System.out.println(n++ + ". Update tenants");
+            System.out.println(n++ + ". Refresh tenants");
             System.out.println(n++ + ". Delete tenant");
             System.out.println(n++ + ". Issue order to read a specific tenant");
             System.out.println(n++ + ". Issue order to read a specific street");
@@ -43,7 +43,7 @@ public class ManagerApp {
                         readTenants();
                         break;
                     case "3":
-                        updateTenants();
+                        refreshTenants();
                         break;
                     case "4":
                         deleteTenant(reader);
@@ -101,10 +101,10 @@ public class ManagerApp {
         DatabaseManager.readTenants();
     }
 
-    private static void updateTenants() {
+    private static void refreshTenants() {
         System.out.println("Updating tenants...");
-        DatabaseManager.updateTenants();
-        System.out.println("Tenants updated!");
+        DatabaseManager.refreshTenants();
+        System.out.println("Tenants refreshed!");
     }
 
     private static void deleteTenant(BufferedReader reader) {

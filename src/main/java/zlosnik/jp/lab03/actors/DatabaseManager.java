@@ -90,34 +90,21 @@ public abstract class DatabaseManager {
     }
 
     public static void readTenants() {
-        List<Tenant> tenants = updateTenants();
+        List<Tenant> tenants = refreshTenants();
         for (Tenant tenant : tenants) {
             System.out.println(tenant);
         }
     }
 
-    public static List<Tenant> updateTenants() {
+    public static List<Tenant> refreshTenants() {
         List<Tenant> tenants = new ArrayList<>();
         try {
             List<String> folderNames = getFolderNames();
             for (String folderName : folderNames) {
-                Path dataPath = TENANTS_DIRECTORY.resolve(folderName).resolve("data.txt");
-                List<String> dataLines = DatabaseManager.readFile(dataPath);
-                String dataLine = dataLines.get(1);
-                // # ID, Street, heater sizes
-                String[] parts = dataLine.split(", ");
-                int id = Integer.parseInt(parts[0]);
-                String street = parts[1];
-                String[] heaterSizes = parts[2].split(" ");
-                List<Double> heaterSizesParsed = new ArrayList<>();
-                for (String heaterSize : heaterSizes) {
-                    heaterSizesParsed.add(Double.parseDouble(heaterSize));
-                }
-                double heat = Double.parseDouble(parts[3]);
-                double bill = Double.parseDouble(parts[4]);
-                tenants.add(new Tenant(id, street, heaterSizesParsed, heat, bill));
+                Tenant tenant = getTenantByID(Integer.parseInt(folderName));
+                tenants.add(tenant);
             }
-        } catch (IOException e) {
+        } catch (IOException | TenantNotFoundException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }
 
@@ -160,22 +147,22 @@ public abstract class DatabaseManager {
             for (String heaterSize : heaterSizes) {
                 heaterSizesParsed.add(Double.parseDouble(heaterSize));
             }
-            double accumulatedHeat = Double.parseDouble(parts[3]);
             double bill = Double.parseDouble(parts[4]);
-            return new Tenant(id, street, heaterSizesParsed, accumulatedHeat, bill);
+            return new Tenant(id, street, heaterSizesParsed, bill);
         } catch (IOException e) {
             throw new TenantNotFoundException(id);
         }
     }
 
-    public static List<Tenant> getTenantsByStreet(String wantedStreet) {
-        List<Tenant> tenants = updateTenants();
+    public static List<Tenant> getTenantsByStreet(String street) throws StreetNotFoundException {
+        List<Tenant> tenants = refreshTenants();
         List<Tenant> newTenants = new ArrayList<>();
         for (Tenant tenant : tenants) {
-            if (tenant.getStreet().equals(wantedStreet)) {
+            if (tenant.getStreet().equals(street)) {
                 newTenants.add(tenant);
             }
         }
+        if (newTenants.isEmpty()) throw new StreetNotFoundException(street);
         return newTenants;
     }
 
@@ -203,6 +190,7 @@ public abstract class DatabaseManager {
         try {
             List<String> readings = DatabaseManager.readFile(DatabaseManager.READINGS_PATH);
             List<String> newReadings = new ArrayList<>();
+            newReadings.add(readings.getFirst());
             double reading = 0;
             for (int i = 1; i < readings.size(); i++) {
                 String line = readings.get(i);

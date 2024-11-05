@@ -106,7 +106,7 @@ public class TechnicianApp {
     private static void readAll(Technician technician) {
         try {
             System.out.println("Reading all tenants...");
-            technician.logMeterReadings(DatabaseManager.updateTenants());
+            technician.logMeterReadings(DatabaseManager.refreshTenants());
             System.out.println("All tenants read complete!");
         } catch (StreetNotFoundException e) {
             System.out.println("Error reading all tenants.");

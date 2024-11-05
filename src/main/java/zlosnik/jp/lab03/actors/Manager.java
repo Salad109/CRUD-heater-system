@@ -26,9 +26,20 @@ public class Manager {
         return reading * PRICE_PER_HEAT_UNIT;
     }
 
-    public double billTenant(int id) throws TenantNotFoundException, IOException { // TODO do wyjebania, ma być na podstawie data-readings.txt
-        List<String> readings = DatabaseManager.readFile(DatabaseManager.READINGS_PATH);
-        for(int i = 1; i < readings.size(); i++) {}
-        return 0.0;
+    public double billTenant(int id) throws TenantNotFoundException, IOException {
+        double reading = DatabaseManager.getReading(id);
+        double newBill = calculateBill(reading);
+        Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
+
+        List<String> lines = DatabaseManager.readFile(dataPath);
+        String dataLine = lines.get(1);
+        String[] parts = dataLine.split(", ");
+        double existingBill = Double.parseDouble(parts[4]);
+        double totalBill = existingBill + newBill;
+        parts[4] = Double.toString(totalBill);
+        dataLine = String.join(", ", parts);
+        lines.set(1, dataLine);
+        DatabaseManager.writeToFile(lines, dataPath);
+        return newBill;
     }
 }
