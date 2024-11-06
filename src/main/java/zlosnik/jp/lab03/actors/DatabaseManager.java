@@ -2,7 +2,6 @@ package zlosnik.jp.lab03.actors;
 
 import java.io.*;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -114,23 +113,13 @@ public abstract class DatabaseManager {
     }
 
     public static void deleteTenant(int id) throws TenantNotFoundException {
-        Path path = Paths.get("tenants/" + id);
+        Path tenantDirPath = TENANTS_DIRECTORY.resolve(Integer.toString(id));
 
         // Walk through the file tree, deleting files and subdirectories
         try {
-            Files.walkFileTree(path, new SimpleFileVisitor<>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Files.delete(file);
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                    Files.delete(dir);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
+            Files.delete(tenantDirPath.resolve("data.txt"));
+            Files.delete(tenantDirPath.resolve("payment-logs.txt"));
+            Files.delete(tenantDirPath);
         } catch (IOException e) {
             throw new TenantNotFoundException(id);
         }

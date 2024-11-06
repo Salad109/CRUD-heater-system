@@ -12,7 +12,7 @@ public class TechnicianApp {
     public static void main(String[] args) {
         Technician technician = new Technician();
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String choice = "0";
+        String choice = null;
         do {
             int n = 0;
             System.out.println("Technician app:");
@@ -23,7 +23,7 @@ public class TechnicianApp {
             System.out.println(n++ + ". Read a specific street");
             System.out.println(n + ". Read all tenants");
             try {
-                choice = reader.readLine();
+                choice = readInput("Enter choice: ", reader);
                 switch (choice) {
                     case "0":
                         reader.close();
@@ -74,9 +74,9 @@ public class TechnicianApp {
     }
 
     private static void readID(BufferedReader reader, Technician technician) {
-        System.out.println("Provide tenant ID:");
         try {
-            int id = Integer.parseInt(reader.readLine());
+            System.out.println("Provide tenant ID to be read.");
+            int id = Integer.parseInt(readInput("Enter tenant ID: ", reader));
             System.out.println("Reading tenant...");
             Tenant tenant = DatabaseManager.getTenantByID(id);
             technician.logMeterReading(tenant);
@@ -85,23 +85,19 @@ public class TechnicianApp {
             System.out.println("Invalid input.");
         } catch (TenantNotFoundException e) {
             System.out.println("Tenant not found.");
-        } catch (IOException e) {
-            System.out.println("Failed to log meter reading.");
         }
     }
 
     private static void readStreet(BufferedReader reader, Technician technician) {
         try {
-            System.out.println("Provide street:");
-            String street = reader.readLine();
+        System.out.println("Provide street name to be read.");
+            String street = readInput("Enter street name: ", reader);
             System.out.println("Reading street...");
             List<Tenant> tenantList = DatabaseManager.getTenantsByStreet(street);
             technician.logMeterReadings(tenantList);
             System.out.println("Street read complete!");
         } catch (StreetNotFoundException e) {
             System.out.println("Street not found.");
-        } catch (IOException e) {
-            System.out.println("Invalid input.");
         }
     }
 
@@ -113,5 +109,18 @@ public class TechnicianApp {
         } catch (StreetNotFoundException e) {
             System.out.println("Error reading all tenants.");
         }
+    }
+
+    private static String readInput(String prompt, BufferedReader reader) {
+        System.out.print(prompt);
+        String input = null;
+        do {
+            try {
+                input = reader.readLine();
+            } catch (IOException e) {
+                System.out.println("Input error. Please try again.");
+            }
+        } while (input == null);
+        return input;
     }
 }

@@ -9,6 +9,7 @@ import java.util.List;
 
 public class Manager {
     private static final double PRICE_PER_HEAT_UNIT = 100.0;
+    private Tenant tenant = null;
 
     public void issueOrder(String order) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(DatabaseManager.ORDERS_PATH.toString(), true))) {
@@ -53,6 +54,68 @@ public class Manager {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(logPath.toString(), true))) {
             bw.write(logMessage);
             bw.newLine();
+        }
+    }
+
+    public void setTenant(int id) throws TenantNotFoundException {
+        tenant = DatabaseManager.getTenantByID(id);
+    }
+
+    public Tenant getTenant() {
+        return tenant;
+    }
+
+    public void modifyStreet(String newStreet) throws TenantNotFoundException {
+        int id = tenant.getId();
+        try {
+            Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
+            List<String> lines = DatabaseManager.readFile(dataPath);
+            String dataLine = lines.get(1);
+            String[] parts = dataLine.split(", ");
+            parts[1] = newStreet;
+            dataLine = String.join(", ", parts);
+            lines.set(1, dataLine);
+            DatabaseManager.writeToFile(lines, dataPath);
+        } catch (IOException e) {
+            throw new TenantNotFoundException(id);
+        }
+    }
+
+    public void modifyHeaters(List<Double> heaterSizes) throws TenantNotFoundException {
+        int id = tenant.getId();
+        try {
+            Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
+            List<String> lines = DatabaseManager.readFile(dataPath);
+            String dataLine = lines.get(1);
+            String[] parts = dataLine.split(", ");
+            StringBuilder heaterPart = new StringBuilder();
+            for (Double heaterSize : heaterSizes) {
+                heaterPart.append(heaterSize);
+                heaterPart.append(" ");
+            }
+            heaterPart.deleteCharAt(heaterPart.length() - 1);
+            parts[2] = heaterPart.toString();
+            dataLine = String.join(", ", parts);
+            lines.set(1, dataLine);
+            DatabaseManager.writeToFile(lines, dataPath);
+        } catch (IOException e) {
+            throw new TenantNotFoundException(id);
+        }
+    }
+
+    public void cleanBill() throws TenantNotFoundException {
+        int id = tenant.getId();
+        try {
+            Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
+            List<String> lines = DatabaseManager.readFile(dataPath);
+            String dataLine = lines.get(1);
+            String[] parts = dataLine.split(", ");
+            parts[4] = "0.0";
+            dataLine = String.join(", ", parts);
+            lines.set(1, dataLine);
+            DatabaseManager.writeToFile(lines, dataPath);
+        } catch (IOException e) {
+            throw new TenantNotFoundException(id);
         }
     }
 }

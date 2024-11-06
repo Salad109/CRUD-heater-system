@@ -20,18 +20,18 @@ public class TenantApp {
             DatabaseManager.readTenants();
             System.out.println("Which tenant are you? Provide your ID:");
             try {
-                int id = Integer.parseInt(reader.readLine());
+                int id = Integer.parseInt(readInput("Enter ID: ", reader));
                 System.out.println("Reading tenant...");
                 tenant = DatabaseManager.getTenantByID(id);
                 System.out.println("Tenant read complete.");
-            } catch (InputMismatchException | NumberFormatException | IOException e) {
+            } catch (NumberFormatException e) {
                 System.out.println("Invalid input.");
             } catch (TenantNotFoundException e) {
                 System.out.println("Tenant not found.");
             }
         } while (tenant == null);
 
-        String choice = "0";
+        String choice = null;
         do {
             int n = 0;
             System.out.println("Tenant App:");
@@ -42,7 +42,7 @@ public class TenantApp {
             System.out.println(n++ + ". Pay my bill");
             System.out.println(n + ". View my billing history");
             try {
-                choice = reader.readLine();
+                choice = readInput("Enter choice: ", reader);
 
                 switch (choice) {
                     case "0":
@@ -107,7 +107,7 @@ public class TenantApp {
         System.out.println("How much would you like to pay off?");
         double payAmount;
         try {
-            String line = reader.readLine();
+            String line = readInput("Enter pay amount: ", reader);
             payAmount = Double.parseDouble(line);
             if (payAmount < 0) {
                 System.out.println("Payment amount must be greater than 0.");
@@ -131,5 +131,18 @@ public class TenantApp {
         } catch (IOException e) {
             System.out.println("Tenant not found.");
         }
+    }
+
+    private static String readInput(String prompt, BufferedReader reader) {
+        System.out.print(prompt);
+        String input = null;
+        do {
+            try {
+                input = reader.readLine();
+            } catch (IOException e) {
+                System.out.println("Input error. Please try again.");
+            }
+        } while (input == null);
+        return input;
     }
 }
