@@ -26,7 +26,7 @@ public class Manager {
 
     public double billTenant(int id) throws TenantNotFoundException {
         try {
-            double reading = DatabaseManager.getReading(id);
+            double reading = getReading(id);
             double newBill = calculateBill(reading);
 
             Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
@@ -45,6 +45,30 @@ public class Manager {
             logBill(newBill, id);
 
             return newBill;
+        } catch (IOException e) {
+            throw new TenantNotFoundException(id);
+        }
+    }
+
+
+    public static double getReading(int id) throws TenantNotFoundException {
+        try {
+            List<String> readings = DatabaseManager.readFile(DatabaseManager.READINGS_PATH);
+            List<String> newReadings = new ArrayList<>();
+            newReadings.add(readings.getFirst());
+            double reading = 0;
+            for (int i = 1; i < readings.size(); i++) {
+                String line = readings.get(i);
+                String[] parts = line.split(", ");
+                if (parts[0].equals(Integer.toString(id))) {
+                    reading = Double.parseDouble(parts[1]);
+                    parts[1] = "0.0";
+                }
+                newReadings.add(String.join(", ", parts));
+            }
+
+            DatabaseManager.writeToFile(newReadings, DatabaseManager.READINGS_PATH);
+            return reading;
         } catch (IOException e) {
             throw new TenantNotFoundException(id);
         }
