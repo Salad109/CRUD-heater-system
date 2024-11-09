@@ -3,8 +3,10 @@ package zlosnik.jp.lab03.actors;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Manager {
@@ -65,7 +67,7 @@ public class Manager {
         return tenant;
     }
 
-    public void modifyStreet(String newStreet) throws TenantNotFoundException {
+    public void updateStreet(String newStreet) throws TenantNotFoundException {
         int id = tenant.getId();
         try {
             Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
@@ -81,7 +83,7 @@ public class Manager {
         }
     }
 
-    public void modifyHeaters(List<Double> heaterSizes) throws TenantNotFoundException {
+    public void updateHeaters(List<Double> heaterSizes) throws TenantNotFoundException {
         int id = tenant.getId();
         try {
             Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
@@ -118,4 +120,42 @@ public class Manager {
             throw new TenantNotFoundException(id);
         }
     }
+
+    public void createTenant(String street, List<Double> heaterSizes) throws IOException {
+        // Get unused ID
+        int id = DatabaseManager.getFreeId();
+        // Create a folder and files for the new tenant, get path to their data.txt
+        Path dataPath = createDirectoryAndFiles(id);
+
+        List<String> lines = new ArrayList<>();
+        // Header line
+        lines.add("# ID, Street, heater sizes, accumulated heat, bill");
+        // Build the data line
+        StringBuilder dataLine = new StringBuilder((id + ", " + street + ","));
+        for (Double heaterSize : heaterSizes) {
+            dataLine.append(" ").append(heaterSize);
+        }
+        dataLine.append(", 0.0, 0.0");
+
+        lines.add(dataLine.toString());
+        // Fill the data.txt with tenant's information
+        DatabaseManager.writeToFile(lines, dataPath);
+    }
+
+    private Path createDirectoryAndFiles(int id) throws IOException {
+        // Create a directory with the provided ID
+        Path dirPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id));
+        Files.createDirectories(dirPath);
+
+        // Create data.txt file inside the directory
+        Path dataPath = dirPath.resolve("data.txt");
+        Files.createFile(dataPath);
+        // Create a payment log file
+        Path logsPath = dirPath.resolve("payment-logs.txt");
+        Files.createFile(logsPath);
+
+        // Return path to data.txt
+        return dataPath;
+    }
+
 }

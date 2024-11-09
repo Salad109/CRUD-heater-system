@@ -17,27 +17,6 @@ public abstract class DatabaseManager {
     public static final Path ORDERS_PATH = Paths.get("data-orders.txt");
 
 
-    public static void createTenant(String street, List<Double> heaterSizes) throws IOException {
-        // Get unused ID
-        int id = getFreeId();
-        // Create a folder and files for the new tenant, get path to their data.txt
-        Path dataPath = createDirectoryAndFiles(id);
-
-        List<String> lines = new ArrayList<>();
-        // Header line
-        lines.add("# ID, Street, heater sizes, accumulated heat, bill");
-        // Build the data line
-        StringBuilder dataLine = new StringBuilder((id + ", " + street + ","));
-        for (Double heaterSize : heaterSizes) {
-            dataLine.append(" ").append(heaterSize);
-        }
-        dataLine.append(", 0.0, 0.0");
-
-        lines.add(dataLine.toString());
-        // Fill the data.txt with tenant's information
-        writeToFile(lines, dataPath);
-    }
-
     private static List<String> getFolderNames() throws IOException {
         List<String> folderNames = new ArrayList<>();
 
@@ -56,7 +35,7 @@ public abstract class DatabaseManager {
         return folderNames;
     }
 
-    private static int getFreeId() throws IOException {
+    public static int getFreeId() throws IOException {
         // Get all tenants
         List<String> folderNames = getFolderNames();
         List<Integer> folderIDs = new ArrayList<>();
@@ -72,50 +51,15 @@ public abstract class DatabaseManager {
         return freeId;
     }
 
-    private static Path createDirectoryAndFiles(int id) throws IOException {
-        // Create a directory with the provided ID
-        Path dirPath = TENANTS_DIRECTORY.resolve(Integer.toString(id));
-        Files.createDirectories(dirPath);
-
-        // Create data.txt file inside the directory
-        Path dataPath = dirPath.resolve("data.txt");
-        Files.createFile(dataPath);
-        // Create a payment log file
-        Path logsPath = dirPath.resolve("payment-logs.txt");
-        Files.createFile(logsPath);
-
-        // Return path to data.txt
-        return dataPath;
-    }
-
-    public static void readTenants() {
-        List<Tenant> tenants = refreshTenants();
+    public static void printTenants() {
+        List<Tenant> tenants = getAllTenants();
         for (Tenant tenant : tenants) {
             System.out.println(tenant);
         }
     }
 
-    public static List<Tenant> refreshTenants() {
-        List<Tenant> tenants = new ArrayList<>();
-        try {
-            List<String> folderNames = getFolderNames();
-            for (String folderName : folderNames) {
-                Tenant tenant = getTenantByID(Integer.parseInt(folderName));
-                tenants.add(tenant);
-            }
-        } catch (IOException | TenantNotFoundException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
-        }
-
-        tenants.sort(Tenant::compareTo);
-
-        return tenants;
-    }
-
     public static void deleteTenant(int id) throws TenantNotFoundException {
         Path tenantDirPath = TENANTS_DIRECTORY.resolve(Integer.toString(id));
-
-        // Walk through the file tree, deleting files and subdirectories
         try {
             Files.delete(tenantDirPath.resolve("data.txt"));
             Files.delete(tenantDirPath.resolve("payment-logs.txt"));
@@ -144,7 +88,7 @@ public abstract class DatabaseManager {
     }
 
     public static List<Tenant> getTenantsByStreet(String street) throws StreetNotFoundException {
-        List<Tenant> tenants = refreshTenants();
+        List<Tenant> tenants = getAllTenants();
         List<Tenant> newTenants = new ArrayList<>();
         for (Tenant tenant : tenants) {
             if (tenant.getStreet().equals(street)) {
@@ -153,6 +97,23 @@ public abstract class DatabaseManager {
         }
         if (newTenants.isEmpty()) throw new StreetNotFoundException(street);
         return newTenants;
+    }
+
+    public static List<Tenant> getAllTenants() {
+        List<Tenant> tenants = new ArrayList<>();
+        try {
+            List<String> folderNames = getFolderNames();
+            for (String folderName : folderNames) {
+                Tenant tenant = getTenantByID(Integer.parseInt(folderName));
+                tenants.add(tenant);
+            }
+        } catch (IOException | TenantNotFoundException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
+        }
+
+        tenants.sort(Tenant::compareTo);
+
+        return tenants;
     }
 
     public static List<String> readFile(Path filePath) throws IOException {

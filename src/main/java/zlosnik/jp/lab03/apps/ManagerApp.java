@@ -23,7 +23,7 @@ public class ManagerApp {
             System.out.println(n++ + ". Exit");
             System.out.println(n++ + ". Create a new tenant");
             System.out.println(n++ + ". Read tenants");
-            System.out.println(n++ + ". Modify tenant");
+            System.out.println(n++ + ". Update tenant");
             System.out.println(n++ + ". Delete tenant");
             System.out.println(n++ + ". Issue order to read a specific tenant");
             System.out.println(n++ + ". Issue order to read a specific street");
@@ -39,13 +39,13 @@ public class ManagerApp {
                         reader.close();
                         break;
                     case "1":
-                        createTenant(reader);
+                        createTenant(reader, manager);
                         break;
                     case "2":
                         readTenants();
                         break;
                     case "3":
-                        modifyTenant(reader, manager);
+                        updateTenant(reader, manager);
                         break;
                     case "4":
                         deleteTenant(reader);
@@ -75,7 +75,7 @@ public class ManagerApp {
         } while (!choice.equals("0"));
     }
 
-    private static void createTenant(BufferedReader reader) {
+    private static void createTenant(BufferedReader reader, Manager manager) {
         List<Double> heaterSizes = new ArrayList<>();
         try {
             System.out.println("Provide street of the new tenant.");
@@ -86,7 +86,7 @@ public class ManagerApp {
                 if (input == 0) break;
                 heaterSizes.add(input);
             }
-            DatabaseManager.createTenant(street, heaterSizes);
+            manager.createTenant(street, heaterSizes);
             System.out.println("Tenant created!");
         } catch (IOException | NumberFormatException e) {
             System.out.println("Invalid input.");
@@ -94,10 +94,10 @@ public class ManagerApp {
     }
 
     private static void readTenants() {
-        DatabaseManager.readTenants();
+        DatabaseManager.printTenants();
     }
 
-    private static void modifyTenant(BufferedReader reader, Manager manager) {
+    private static void updateTenant(BufferedReader reader, Manager manager) {
         loadTenant(reader, manager);
         String choice = getChoice(reader);
 
@@ -108,7 +108,7 @@ public class ManagerApp {
                 try {
                     System.out.println("Changing street name.");
                     String street = readInput("Enter new street name: ", reader);
-                    manager.modifyStreet(street);
+                    manager.updateStreet(street);
                     System.out.println("Street renamed!");
                 } catch (TenantNotFoundException e) {
                     System.out.println("Tenant not found!");
@@ -123,7 +123,7 @@ public class ManagerApp {
                     heaterSizes.add(input);
                 }
                 try {
-                    manager.modifyHeaters(heaterSizes);
+                    manager.updateHeaters(heaterSizes);
                     System.out.println("Heaters changed!");
                 } catch (TenantNotFoundException e) {
                     System.out.println("Tenant not found!");
@@ -146,8 +146,8 @@ public class ManagerApp {
 
     private static void loadTenant(BufferedReader reader, Manager manager) {
         try {
-            System.out.println("Modifying tenant.");
-            int id = Integer.parseInt(readInput("Provide tenant ID to modify: ", reader));
+            System.out.println("Updating tenant.");
+            int id = Integer.parseInt(readInput("Provide tenant ID to update: ", reader));
             manager.setTenant(id);
             System.out.println(manager.getTenant());
         } catch (NumberFormatException e) {

@@ -17,7 +17,7 @@ public class TenantApp {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
         do {
-            DatabaseManager.readTenants();
+            DatabaseManager.printTenants();
             System.out.println("Which tenant are you? Provide your ID:");
             try {
                 int id = Integer.parseInt(readInput("Enter ID: ", reader));
