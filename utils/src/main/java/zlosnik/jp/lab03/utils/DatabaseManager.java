@@ -1,4 +1,4 @@
-package zlosnik.jp.lab03.actors;
+package zlosnik.jp.lab03.utils;
 
 import java.io.*;
 import java.nio.file.*;
@@ -13,7 +13,7 @@ public abstract class DatabaseManager {
 
     public static final Logger logger = Logger.getLogger("Database manager logger");
     public static final Path READINGS_PATH = Paths.get("data-readings.txt");
-    public static final Path TENANTS_DIRECTORY = Paths.get("tenants");
+    public static final Path TENANTS_DIRECTORY = Paths.get("data-tenants");
     public static final Path ORDERS_PATH = Paths.get("data-orders.txt");
 
 

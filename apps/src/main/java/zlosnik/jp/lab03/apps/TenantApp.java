@@ -1,8 +1,6 @@
 package zlosnik.jp.lab03.apps;
 
-import zlosnik.jp.lab03.actors.DatabaseManager;
-import zlosnik.jp.lab03.actors.Tenant;
-import zlosnik.jp.lab03.actors.TenantNotFoundException;
+import zlosnik.jp.lab03.utils.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +10,6 @@ import java.util.List;
 
 public class TenantApp {
     public static void main(String[] args) {
-        System.out.println("I'm a tenant!");
         Tenant tenant = null;
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 

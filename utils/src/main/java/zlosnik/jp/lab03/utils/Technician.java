@@ -1,4 +1,4 @@
-package zlosnik.jp.lab03.actors;
+package zlosnik.jp.lab03.utils;
 
 import java.io.IOException;
 import java.nio.file.Path;

@@ -1,6 +1,6 @@
 package zlosnik.jp.lab03.apps;
 
-import zlosnik.jp.lab03.actors.*;
+import zlosnik.jp.lab03.utils.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -90,7 +90,7 @@ public class TechnicianApp {
 
     private static void readStreet(BufferedReader reader, Technician technician) {
         try {
-        System.out.println("Provide street name to be read.");
+            System.out.println("Provide street name to be read.");
             String street = readInput("Enter street name: ", reader);
             System.out.println("Reading street...");
             List<Tenant> tenantList = DatabaseManager.getTenantsByStreet(street);

@@ -1,4 +1,4 @@
-package zlosnik.jp.lab03.actors;
+package zlosnik.jp.lab03.utils;
 
 public class StreetNotFoundException extends Exception{
     StreetNotFoundException(String street) {

@@ -1,8 +1,6 @@
 package zlosnik.jp.lab03.apps;
 
-import zlosnik.jp.lab03.actors.DatabaseManager;
-import zlosnik.jp.lab03.actors.Manager;
-import zlosnik.jp.lab03.actors.TenantNotFoundException;
+import zlosnik.jp.lab03.utils.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
