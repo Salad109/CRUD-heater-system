@@ -14,7 +14,7 @@ public class Tenant implements Comparable<Tenant> {
     private final List<Heater> heaters = new ArrayList<>();
     private final double bill;
 
-    // # ID, Street, heater sizes, accumulated heat, bill
+    // # ID, Street, heater sizes, bill
     public Tenant(int id, String street, List<Double> heaterSizes, double bill) {
         this.id = id;
         this.street = street;

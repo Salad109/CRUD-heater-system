@@ -12,15 +12,15 @@ public abstract class DatabaseManager {
     }
 
     public static final Logger logger = Logger.getLogger("Database manager logger");
-    public static final Path READINGS_PATH = Paths.get("data-readings.txt");
-    public static final Path TENANTS_DIRECTORY = Paths.get("data-tenants");
-    public static final Path ORDERS_PATH = Paths.get("data-orders.txt");
+    public static final Path TENANTS_DIRECTORY = Paths.get("data");
+    public static final Path READINGS_PATH = TENANTS_DIRECTORY.resolve("readings.txt");
+    public static final Path ORDERS_PATH = TENANTS_DIRECTORY.resolve("orders.txt");
 
 
     private static List<String> getFolderNames() throws IOException {
         List<String> folderNames = new ArrayList<>();
 
-        // Open the directory stream
+        // Get directory
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(TENANTS_DIRECTORY)) {
             // Iterate over each entry in the directory
             for (Path entry : stream) {
@@ -61,8 +61,10 @@ public abstract class DatabaseManager {
     public static void deleteTenant(int id) throws TenantNotFoundException {
         Path tenantDirPath = TENANTS_DIRECTORY.resolve(Integer.toString(id));
         try {
+            // Delete the files inside tenant folder
             Files.delete(tenantDirPath.resolve("data.txt"));
             Files.delete(tenantDirPath.resolve("payment-logs.txt"));
+            // Delete tenant folder
             Files.delete(tenantDirPath);
         } catch (IOException e) {
             throw new TenantNotFoundException(id);
@@ -72,6 +74,7 @@ public abstract class DatabaseManager {
     public static Tenant getTenantByID(int id) throws TenantNotFoundException {
         Path dataPath = TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
         try {
+            // Read tenant information from their "data.txt"
             List<String> dataLines = DatabaseManager.readFile(dataPath);
             String[] parts = dataLines.get(1).split(", ");
             String street = parts[1];
@@ -81,6 +84,7 @@ public abstract class DatabaseManager {
                 heaterSizesParsed.add(Double.parseDouble(heaterSize));
             }
             double bill = Double.parseDouble(parts[4]);
+            // Return newly built tenant instance
             return new Tenant(id, street, heaterSizesParsed, bill);
         } catch (IOException e) {
             throw new TenantNotFoundException(id);
@@ -103,6 +107,7 @@ public abstract class DatabaseManager {
         List<Tenant> tenants = new ArrayList<>();
         try {
             List<String> folderNames = getFolderNames();
+            // Get every tenant
             for (String folderName : folderNames) {
                 Tenant tenant = getTenantByID(Integer.parseInt(folderName));
                 tenants.add(tenant);

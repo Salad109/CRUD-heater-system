@@ -29,18 +29,20 @@ public class Manager {
             double reading = getReading(id);
             double newBill = calculateBill(reading);
 
+            // Read tenant's current bill
             Path dataPath = DatabaseManager.TENANTS_DIRECTORY.resolve(Integer.toString(id)).resolve("data.txt");
             List<String> lines = DatabaseManager.readFile(dataPath);
             String dataLine = lines.get(1);
             String[] parts = dataLine.split(", ");
-
             double existingBill = Double.parseDouble(parts[4]);
-            double totalBill = existingBill + newBill;
 
+            // Calculate and set the new bill
+            double totalBill = existingBill + newBill;
             parts[4] = Double.toString(totalBill);
             dataLine = String.join(", ", parts);
             lines.set(1, dataLine);
 
+            // Write new bill
             DatabaseManager.writeToFile(lines, dataPath);
             logBill(newBill, id);
 
@@ -61,6 +63,7 @@ public class Manager {
                 String line = readings.get(i);
                 String[] parts = line.split(", ");
                 if (parts[0].equals(Integer.toString(id))) {
+                    // Return the reading after resetting it
                     reading = Double.parseDouble(parts[1]);
                     parts[1] = "0.0";
                 }

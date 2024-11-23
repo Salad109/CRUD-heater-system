@@ -1,2 +1,2 @@
 # ID, Street, heater sizes, accumulated heat, bill
-3, Stara ulica, 2.5 4, 0.0, 100.0
+3, Stara ulica, 2.5 4, 0.0, 900.0

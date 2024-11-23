@@ -1,2 +1,0 @@
-Manager billed 100.0 at 2024-11-06T17:37:13.691661044Z
-Manager billed 0.0 at 2024-11-06T17:37:17.981785914Z

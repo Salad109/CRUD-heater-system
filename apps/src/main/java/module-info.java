@@ -1,4 +1,3 @@
 module apps {
     requires utils;
-
 }
