@@ -12,7 +12,6 @@ public class Technician {
         try {
             double reading = getHeatByID(id);
             writeReadingToFile(id, reading);
-            // TODO log to reading logs in tenants/id/readings-logs.txt
         } catch (IOException e) {
             throw new TenantNotFoundException(id);
         }

@@ -4,14 +4,11 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public abstract class DatabaseManager {
     private DatabaseManager() {
     }
 
-    public static final Logger logger = Logger.getLogger("Database manager logger");
     public static final Path TENANTS_DIRECTORY = Paths.get("data");
     public static final Path READINGS_PATH = TENANTS_DIRECTORY.resolve("readings.txt");
     public static final Path ORDERS_PATH = TENANTS_DIRECTORY.resolve("orders.txt");
@@ -113,7 +110,7 @@ public abstract class DatabaseManager {
                 tenants.add(tenant);
             }
         } catch (IOException | TenantNotFoundException e) {
-            logger.log(Level.SEVERE, e.getMessage(), e);
+            return new ArrayList<>();
         }
 
         tenants.sort(Tenant::compareTo);

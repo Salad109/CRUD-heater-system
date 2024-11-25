@@ -1,2 +1,2 @@
 # ID, Street, heater sizes, accumulated heat, bill
-1, Norwida, 2.5 1.5 3.14, 0.0, 7000.0
+1, Norwida, 2.5 1.5 3.14, 556.0, 9114.0
